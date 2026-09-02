@@ -1,0 +1,22 @@
+{
+  "model_family": "CatBoostRanker",
+  "objective": "YetiRank",
+  "selection_criterion": "inner_query_mean_ndcg_at8",
+  "selected_setting": {
+    "allow_writing_files": false,
+    "depth": 4,
+    "iterations": 300,
+    "learning_rate": 0.1,
+    "loss_function": "YetiRank",
+    "thread_count": 4
+  },
+  "features": [
+    "semantic_similarity",
+    "dense_rank_percentile",
+    "dense_membership",
+    "log_comment_length",
+    "lexical_similarity",
+    "maximum_community_similarity",
+    "mean_community_similarity"
+  ]
+}

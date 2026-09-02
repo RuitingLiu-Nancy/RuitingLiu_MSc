@@ -1,0 +1,1887 @@
+retrieval:
+  k: 8
+  pool: 20
+  eval_pool: 100
+  hops: 2
+  k0: 60
+  eval_queries: 113
+  drug_filter_field: query_text
+fusion:
+  mode: cc
+  weights:
+    semantic: 1.0
+    bm25: 0.5
+    multihop: 0.3
+entity_bridge:
+  w_sem: 1.0
+  w_graph: 0.5
+  min_ent_idf: 1.5
+  top_seed: 60
+  graph_pool: 200
+multihop:
+  max_seeds: 8
+  max_nodes: 60
+  chain_bonus: 1.15
+  decay: hop
+  semantic_seeds: true
+  seed_encoder: bare
+  semantic_seed_topk: 8
+  semantic_seed_min_sim: 0.25
+  seed_union_cap: 16
+  beam: 5
+  hub_deg: 60
+  query_gate: false
+  gate_floor: 0.0
+  gate_power: 1.0
+  entity_idf_power: 0.0
+hipporag_ppr:
+  damping: 0.5
+  node_specificity_power: 1.0
+  max_iter: 100
+  tol: 1.0e-06
+hierarchy:
+  top_concepts: 6
+  per_concept: 50
+  min_sim: 0.0
+  concept_encoder: bare
+densify:
+  normalize: logmax
+  cooc_min: 1
+  knn_k: 5
+  knn_thresh: 0.5
+  max_cluster_size: 10
+  seed: 42
+  type_weights:
+    relation: 1.0
+    cooc: 0.6
+    knn: 0.3
+eval:
+  ndcg_k: 8
+  recall_ks:
+  - 10
+  - 100
+  tune_step: 0.1
+reranker_validation:
+  group_folds: 5
+  rf_trees: 250
+  rf_min_leaf: 2
+  ridge_alpha: 10.0
+  tfidf_min_df: 2
+  tfidf_max_features: 30000
+  lambdamart_estimators: 200
+  lambdamart_learning_rate: 0.05
+  lambdamart_max_depth: 3
+  lambdamart_pairs_per_sample: 8
+  crossencoder_model: sentence-transformers/all-MiniLM-L6-v2
+  crossencoder_epochs: 0.5
+  crossencoder_batch_size: 1
+  crossencoder_mini_batch_size: 8
+  crossencoder_learning_rate: 2.0e-05
+  crossencoder_max_length: 192
+  seed: 13
+  relevance_gate: 3.0
+  usefulness_gate: 3.0
+  safety_gate: 4.0
+  diversity_lambdas:
+  - 0.0
+  - 0.05
+  - 0.1
+  - 0.15
+  - 0.2
+  - 0.3
+  - 0.4
+  max_utility_ndcg_drop: 0.005
+  max_reasonable_share_drop: 0.005
+official_transition_profiles:
+  profiles:
+  - static
+  - hub
+  - node
+  - node_relation
+  alpha: 1.0
+  beta: 1.0
+  hub_gamma: 0.5
+  epsilon: 0.05
+  relation_aggregation: max
+official_local_pcst:
+  entity_anchors: 6
+  passage_anchors: 6
+  hops: 2
+  max_local_nodes: 2500
+  max_neighbors_per_node: 100
+  query_prize_top_k: 32
+  passage_prize_top_k: 16
+  max_mapping_entity_degree: 500
+  max_passage_candidates: 500
+  query_prize: 1.0
+  seed_prize: 2.0
+  passage_prize: 0.5
+  anchor_bonus: 2.0
+  base_edge_cost: 0.35
+  hub_cost: 0.75
+official_spreading:
+  top_k_active: 2000
+  gate_epsilon: 0.05
+  hub_gamma: 0.5
+  relation_beta: 1.0
+  relation_epsilon: 0.05
+  relation_aggregation: max
+  early_stop_mass_ratio: 1.0e-06
+  accumulate: true
+official_dense_bridge:
+  dense_anchor_passages: 20
+  max_anchors: 8
+  anchor_max_degree: 500
+  anchor_epsilon: 0.05
+  anchor_degree_gamma: 0.5
+  merge_strategy: interleave
+official_multi_pcst:
+  trees: 2
+  node_prize_multiplier: 0.1
+  edge_cost_multiplier: 3.0
+  passage_prize_multiplier: 0.1
+  coverage_lambda: 0.5
+  redundancy_mu: 0.5
+  cost_gamma: 0.1
+  coverage_threshold: 0.15
+  min_component_tokens: 4
+  max_components: 6
+safety:
+  drug_filter: true
+models:
+  comment_annotation: bedrock:global.anthropic.claude-haiku-4-5-20251001-v1:0
+  entity_extraction: openai:gpt-4o-mini
+  answer_generation: openai:gpt-4o-mini
+  judge: openai:gpt-4o-mini
+  semantic_backend: all-MiniLM-L6-v2
+stage2_community_dev300_complete:
+  version: stage2-community-dev300-complete-v1
+  output_dir: out/stage2_community_dev300_complete_v1
+  expected_queries: 300
+  expected_replies: 4143
+  backend: e5
+  bidirectional_beta: 1.0
+  bootstrap_draws: 5000
+  bootstrap_seed: 20260821
+  encoder_config_key: community_reply_auxiliary
+  corpus: out/hipporag_official_adapter/adhd_peer_support_validation_corpus.json
+  reference_texts: out/evidence_signal_triangulation_dev300_v1/ADMIN_community_reply_reference_texts.jsonl
+  triangulation_manifest: out/evidence_signal_triangulation_dev300_v1/manifest.json
+  utility_registry: out/rq2a_graph_budget_sweep_v1/complete/utility_registry_coverage_complete.jsonl
+  dense_memberships: out/development300_m50_preflight_v1/dense_m50_memberships.jsonl
+  split_manifest: out/development300_analysis_inputs_v1/split_manifest.json
+  sources:
+  - sets: out/stage2_lightweight_selection_sets_best_v1
+    sets_key: stage2_lightweight_selection_sets_best
+    symmetric: out/stage2_lightweight_symmetric_all_v1
+  - sets: out/stage2_redesign_selection_sets_rrf2_gain7d_v1
+    sets_key: stage2_redesign_selection_sets_rrf2_gain7d
+    symmetric: out/stage2_redesign_symmetric_rrf2_gain7d_v1
+  - sets: out/stage2_redesign_selection_sets_rrf2_ce_matched_v1
+    sets_key: stage2_redesign_selection_sets_rrf2_ce_matched
+    symmetric: out/stage2_redesign_symmetric_rrf2_ce_matched_v1
+  - sets: out/stage2_redesign_selection_sets_rrf2_clean7d_v1
+    sets_key: stage2_redesign_selection_sets_rrf2_clean7d
+    symmetric: out/stage2_redesign_symmetric_rrf2_clean7d_v1
+  allow_external_calls: false
+  allow_frozen_test: false
+test200_clean7d_confirmation_v2:
+  version: test200-clean7d-confirmation-v2
+  frozen_inputs_config_key: confirmatory_test200_rq2b_v2
+  expected_existing_test_labels: 4308
+  pricing_precheck_file: /tmp/test200_clean7d_current_pricing.json
+  judge_workers: 2
+  judge_minimum_interval_seconds: 1.1
+  judge_throttle_cooldown_seconds: 30.0
+  community_embedding_prior_dir: out/evidence_signal_triangulation_dev300_v1
+  community_device: mps
+  community_device_equivalence_tolerance: 1.0e-05
+  input_framing_token_reserve: 2048
+  preregistration: docs_v2/138_Test200确认v2预注册_2026-08-31.md
+  final_model_dir: out/dev300_confirmation_clean7d_models_v2
+  output_dir: out/test200_clean7d_confirmation_v2
+  lightweight_config_key: lightweight_scorer_search_dev300
+  lightweight_model: lw_catboost_yetirank
+  crossencoder_config_key: stage2_redesign_crossencoder_rrf2_matched
+  lightweight_seed_offset: 700000
+  lightweight_final_seed_offset: 500000
+  catboost_threads: 4
+  training_logging_steps: 100
+  expected_queries: 200
+  pool_depth: 50
+  final_k: 8
+  backend: e5
+  residual_beta: 0.041
+  semantic_weight: 1.0
+  graph_weight: 0.3
+  rrf_k0: 60
+  cc_normalization: query-local-minmax
+  graph_routes:
+  - no_recognition
+  - fact_only_no_recognition
+  expected_pool_identity:
+    same_candidate_set: 200
+    same_full_order: 3
+    mean_top8_overlap: 5.725
+  bootstrap_draws: 10000
+  bootstrap_seed: 20260822
+  query_order: lexicographic_query_id
+  judge_model: bedrock:us.meta.llama3-3-70b-instruct-v1:0
+  judge_temperature: 0
+  judge_max_tokens: 350
+  anchor_count: 50
+  allowed_anchor_statuses:
+  - STABLE
+  - STABLE_WITH_MINOR_DRIFT
+  budget_usd_including_retries: 3.0
+  allow_external_judging: true
+  allow_frozen_test_read_after_p1: true
+  authorisation: user requested execution of docs138 on 2026-08-31
+corpus_embeddings_rawtext:
+  corpus: out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+  output_dir: out/rawtext_backends_v1
+  superseded_corpus: out/hipporag_official_adapter/adhd_peer_support_validation_corpus.json
+  allow_external_judging: false
+  allow_frozen_test: false
+  gate_tolerance: 1.0e-05
+  e5:
+    model_id: intfloat/e5-base-v2
+    revision: f52bf8ec8c7124536f0efb74aca902b2995e5bcd
+    local_snapshot: null
+    reference_embeddings: out/depth_graph_utility_community_frontier_dev100_v1/backend_manifests/e5_corpus_embeddings.npy
+    passage_prefix: 'passage: '
+    batch_size: 32
+    max_sequence_length: 512
+    dimension: 768
+  minilm:
+    model_id: sentence-transformers/all-MiniLM-L6-v2
+    revision: 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+    local_snapshot: null
+    reference_embeddings: out/sbert_graph_comparison_dev100_v1/sbert_corpus_embeddings.npy
+    batch_size: 32
+    dimension: 384
+development300_m50_preflight_rawtext:
+  version: development300-m50-preflight-rawtext-v1
+  allow_external_judging: false
+  allow_frozen_test: false
+  output_dir: out/development300_m50_preflight_rawtext_v1
+  partition_manifest: out/development300_stratified_v1/manifest.json
+  queries: out/development300_stratified_v1/development300_queries_official.json
+  additional_queries: out/development300_stratified_v1/additional200_queries_official.json
+  corpus: out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+  minilm:
+    model_id: sentence-transformers/all-MiniLM-L6-v2
+    revision: 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+    local_snapshot: null
+    corpus_embeddings: out/rawtext_backends_v1/minilm_corpus_embeddings.npy
+    batch_size: 32
+  e5:
+    model_id: intfloat/e5-base-v2
+    revision: f52bf8ec8c7124536f0efb74aca902b2995e5bcd
+    local_snapshot: null
+    corpus_embeddings: out/rawtext_backends_v1/e5_corpus_embeddings.npy
+    batch_size: 32
+    max_sequence_length: 512
+  graph_budget: 4
+  source_dev100_graph_runs:
+    no_recognition: out/development200_sbert_official_v1/no_recognition.jsonl
+    fact_only_no_recognition: out/development200_sbert_official_v1/fact_only_no_recognition.jsonl
+  source_dev100_graph_entry_traces:
+    no_recognition: out/development200_sbert_official_v1/no_recognition.entry_trace.jsonl
+    fact_only_no_recognition: out/development200_sbert_official_v1/fact_only_no_recognition.entry_trace.jsonl
+  source_dev100_graph_manifests:
+    no_recognition: out/development200_sbert_official_v1/no_recognition.manifest.json
+    fact_only_no_recognition: out/development200_sbert_official_v1/fact_only_no_recognition.manifest.json
+  additional200_graph_runs:
+    no_recognition: out/development300_sbert_official_additional200_v1/no_recognition.jsonl
+    fact_only_no_recognition: out/development300_sbert_official_additional200_v1/fact_only_no_recognition.jsonl
+  additional200_graph_entry_traces:
+    no_recognition: out/development300_sbert_official_additional200_v1/no_recognition.entry_trace.jsonl
+    fact_only_no_recognition: out/development300_sbert_official_additional200_v1/fact_only_no_recognition.entry_trace.jsonl
+  additional200_graph_manifests:
+    no_recognition: out/development300_sbert_official_additional200_v1/no_recognition.manifest.json
+    fact_only_no_recognition: out/development300_sbert_official_additional200_v1/fact_only_no_recognition.manifest.json
+  utility_registries:
+  - out/depth_graph_utility_community_frontier_dev100_m50_judging_v1/complete/utility_registry_coverage_complete.jsonl
+  - out/remaining268_action_space_confirmation_v1/judging_v1/fresh_utility_registry.jsonl
+  llm_3_3_70b_price_usd_per_million_tokens:
+    input: 0.72
+    output: 0.72
+    source: https://aws.amazon.com/bedrock/pricing/
+    checked_at: '2026-08-10'
+  reference_minilm_rankings: out/depth_graph_utility_community_frontier_dev100_v1/backend_manifests/minilm_d100.jsonl
+  reference_e5_rankings: out/depth_graph_utility_community_frontier_dev100_v1/backend_manifests/e5_d100.jsonl
+  reference_dev100_formal_union: out/depth_graph_utility_community_frontier_dev100_m50_v2/m50_residual_preflight/formal_union_manifest.jsonl
+  reference_dev100_fixed_graph_pool: out/dense_semantic_drift_rescue_audit_dev100_v3/rescue_candidate_pools.jsonl
+  reference_preflight_dir: out/development300_m50_preflight_v1
+  superseded_corpus: out/hipporag_official_adapter/adhd_peer_support_validation_corpus.json
+  query_admin: out/development300_stratified_v1/development300_queries_ADMIN.csv
+  corpus_source_map: out/expanded_graph_rebuild/unified_extract_input_1618.csv
+  analysis_inputs_dir: out/development300_analysis_inputs_v1
+rq2a_graph_budget_sweep_preflight_rawtext:
+  version: rq2a-graph-budget-sweep-dev300-rawtext-v1
+  allow_external_judging: false
+  allow_frozen_test: false
+  output_dir: out/rq2a_graph_budget_sweep_rawtext_v1/preflight
+  partition_manifest: out/development300_stratified_v1/manifest.json
+  queries: out/development300_stratified_v1/development300_queries_official.json
+  query_admin: out/development300_stratified_v1/development300_queries_ADMIN.csv
+  corpus: out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+  corpus_source_map: out/expanded_graph_rebuild/unified_extract_input_1618.csv
+  minilm_rankings: out/development300_m50_preflight_rawtext_v1/backend_manifests/minilm_d100.jsonl
+  e5_rankings: out/development300_m50_preflight_rawtext_v1/backend_manifests/e5_d100.jsonl
+  fixed_graph4: out/development300_m50_preflight_rawtext_v1/strict_fixed_graph4.jsonl
+  source_dev100_graph_runs:
+    no_recognition: out/development200_sbert_official_v1/no_recognition.jsonl
+    fact_only_no_recognition: out/development200_sbert_official_v1/fact_only_no_recognition.jsonl
+  source_dev100_graph_entry_traces:
+    no_recognition: out/development200_sbert_official_v1/no_recognition.entry_trace.jsonl
+    fact_only_no_recognition: out/development200_sbert_official_v1/fact_only_no_recognition.entry_trace.jsonl
+  source_dev100_graph_manifests:
+    no_recognition: out/development200_sbert_official_v1/no_recognition.manifest.json
+    fact_only_no_recognition: out/development200_sbert_official_v1/fact_only_no_recognition.manifest.json
+  additional200_graph_runs:
+    no_recognition: out/development300_sbert_official_additional200_v1/no_recognition.jsonl
+    fact_only_no_recognition: out/development300_sbert_official_additional200_v1/fact_only_no_recognition.jsonl
+  additional200_graph_entry_traces:
+    no_recognition: out/development300_sbert_official_additional200_v1/no_recognition.entry_trace.jsonl
+    fact_only_no_recognition: out/development300_sbert_official_additional200_v1/fact_only_no_recognition.entry_trace.jsonl
+  additional200_graph_manifests:
+    no_recognition: out/development300_sbert_official_additional200_v1/no_recognition.manifest.json
+    fact_only_no_recognition: out/development300_sbert_official_additional200_v1/fact_only_no_recognition.manifest.json
+  utility_registry: out/rq2a_fact_only_label_completion_v1/complete/utility_registry_coverage_complete.jsonl
+  prompt: EXTERNAL_PROMPT_DIR/evidence_card_judge_v2.txt
+  anchor_payload: out/rq2a_fact_only_label_completion_v1/preflight/anchor_payload.jsonl
+  anchor_payload_admin: out/rq2a_fact_only_label_completion_v1/preflight/anchor_payload_admin.jsonl
+  expected_queries: 300
+  expected_corpus_comments: 19013
+  expected_registry_pairs: 37581
+  graph_prefix_budgets:
+  - 4
+  - 8
+  - 10
+  - 12
+  - 20
+  - 25
+  - 40
+  - 50
+  symmetric_dense_depths:
+  - 8
+  - 12
+  - 20
+  - 50
+  analysis_graph_budgets:
+  - 4
+  - 8
+  - 12
+  - 20
+  - 50
+  equal_total_allocations:
+  - - 50
+    - 0
+  - - 46
+    - 4
+  - - 40
+    - 10
+  - - 25
+    - 25
+  - - 10
+    - 40
+  - - 0
+    - 50
+  final_k: 8
+  llm_3_3_70b_price_usd_per_million_tokens:
+    input: 0.72
+    output: 0.72
+    source: https://aws.amazon.com/bedrock/pricing/
+    checked_at: '2026-08-10'
+rq2b_bm25_rankings_dev300_rawtext:
+  version: rq2b-bm25-rankings-dev300-rawtext-v1
+  output_dir: out/rq2b_bm25_rankings_dev300_rawtext_v1
+  corpus: out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+  corpus_source_map: out/expanded_graph_rebuild/unified_extract_input_1618.csv
+  queries: out/development300_analysis_inputs_v1/development300_queries_normalized.json
+  expected_queries: 300
+  top_k: 100
+  retrieve_depth: 1000
+  k1: 1.5
+  b: 0.75
+  method: robertson
+  token_pattern: (?u)\b\w\w+\b
+  stopwords: english
+  stemmer: null
+  allow_external_calls: false
+  allow_frozen_test: false
+rq2b_rrf3_entry_dev300_rawtext:
+  version: rq2b-rrf3-entry-dev300-rawtext-v1
+  output_dir: out/rq2b_rrf3_entry_dev300_rawtext_v1
+  dense_memberships: out/development300_m50_preflight_rawtext_v1/dense_m50_memberships.jsonl
+  graph_memberships: out/rq2a_graph_budget_sweep_rawtext_v1/preflight/graph_prefix_memberships.jsonl
+  bm25_rankings: out/rq2b_bm25_rankings_dev300_rawtext_v1/bm25_rankings.parquet
+  utility_registry: out/development300_m50_utility_judging_openrouter_coreweave_v1/complete/utility_registry_coverage_complete.jsonl
+  backend: e5
+  pool_depth: 50
+  final_k: 8
+  rrf_k0: 60
+  weights_source: configuration/params.yaml::fusion.weights (legacy, never utility-tuned)
+  mainline_weights:
+    dense: 1.0
+    bm25: 0.5
+    graph: 0.3
+  sensitivity_variants:
+    w_bm25_0.3:
+      dense: 1.0
+      bm25: 0.3
+      graph: 0.3
+    w_bm25_0.5:
+      dense: 1.0
+      bm25: 0.5
+      graph: 0.3
+    w_bm25_1.0:
+      dense: 1.0
+      bm25: 1.0
+      graph: 0.3
+    classic_unweighted:
+      dense: 1.0
+      bm25: 1.0
+      graph: 1.0
+  oracle_depths:
+  - 8
+  - 12
+  - 20
+  - 30
+  - 40
+  - 50
+  expected_queries: 300
+  expected_utility_pairs: 32388
+  allow_external_calls: false
+  allow_frozen_test: false
+stage2_redesign_features_rawtext:
+  version: stage2-redesign-features-dev300-rawtext-v1
+  output_dir: out/stage2_redesign_features_dev300_rawtext_v1
+  source_config_key: selection_action_space_repair_dev300_rrf3_rawtext
+  backend: e5
+  anchor: dense_top8
+  anchor_size: 8
+  pool_depth: 50
+  corpus: out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+  queries: out/development300_analysis_inputs_v1/development300_queries_normalized.json
+  dense_memberships: out/development300_m50_preflight_rawtext_v1/dense_m50_memberships.jsonl
+  graph_memberships: out/rq2a_graph_budget_sweep_rawtext_v1/preflight/graph_prefix_memberships.jsonl
+  bm25_rankings: out/rq2b_bm25_rankings_dev300_rawtext_v1/bm25_rankings.parquet
+  rrf3_ordered_ids: out/rq2b_rrf3_entry_dev300_rawtext_v1/rrf3_ordered_ids.jsonl
+  utility_registry: out/development300_m50_utility_judging_openrouter_coreweave_v1/complete/utility_registry_coverage_complete.jsonl
+  expected_registry_rows: 32388
+  expected_queries: 300
+  route_depths:
+    D_dense: 50
+    B_bm25: 100
+    G_graph: 50
+  feature_names:
+  - s_sem
+  - s_lex
+  - p_dense
+  - i_dense
+  - p_bm25
+  - i_bm25
+  - p_graph
+  - i_graph
+  - log_len
+  - s_max_d8
+  - s_mean_d8
+  allow_external_calls: false
+  allow_frozen_test: false
+stage2_redesign_features_rrf2pool_rawtext:
+  version: stage2-redesign-features-rrf2pool-rawtext-v1
+  output_dir: out/stage2_redesign_features_rrf2pool_rawtext_v1
+  features_parquet: out/stage2_redesign_features_dev300_rawtext_v1/stage2_features_11.parquet
+  dense_memberships: out/development300_m50_preflight_rawtext_v1/dense_m50_memberships.jsonl
+  graph_memberships: out/rq2a_graph_budget_sweep_rawtext_v1/preflight/graph_prefix_memberships.jsonl
+  backend: e5
+  pool_depth: 50
+  contract_features:
+  - s_sem
+  - s_lex
+  - p_dense
+  - i_dense
+  - p_bm25
+  - i_bm25
+  - p_graph
+  - i_graph
+  - log_len
+  - s_max_d8
+  - s_mean_d8
+  allow_external_calls: false
+  allow_frozen_test: false
+lightweight_scorer_search_dev300_rawtext:
+  version: lightweight-scorer-search-dev300-rawtext-v1
+  research_question: Given the frozen clean-7D representation, how much additional
+    realised Utility@8 can a broader and better-tuned lightweight learner family recover,
+    and does the matched cross-encoder advantage persist?
+  output_dir: out/lightweight_scorer_search_dev300_rawtext_v1
+  journal_dir: out/lightweight_scorer_search_dev300_rawtext_v1_journal
+  features_parquet: out/stage2_redesign_features_rrf2pool_rawtext_v1/stage2_features_rrf2pool.parquet
+  reference_pool_parquet: out/stage2_redesign_features_rrf2pool_rawtext_v1/stage2_features_rrf2pool.parquet
+  source_config_key: selection_action_space_repair_dev300_rrf3_rawtext
+  backend: e5
+  expected_pairs: 15000
+  expected_queries: 300
+  inner_folds: 5
+  inner_split_seed_offset: 7000
+  feature_names:
+  - s_sem
+  - p_dense
+  - i_dense
+  - log_len
+  - s_lex
+  - s_max_d8
+  - s_mean_d8
+  models:
+  - name: lw_huber
+    fitter: huber
+    family: calibrated
+    objective: continuous utility, Huber loss
+    grid:
+    - epsilon: 1.1
+      alpha: 1.0e-05
+      max_iter: 1000
+    - epsilon: 1.1
+      alpha: 0.0001
+      max_iter: 1000
+    - epsilon: 1.1
+      alpha: 0.001
+      max_iter: 1000
+    - epsilon: 1.1
+      alpha: 0.01
+      max_iter: 1000
+    - epsilon: 1.35
+      alpha: 1.0e-05
+      max_iter: 1000
+    - epsilon: 1.35
+      alpha: 0.0001
+      max_iter: 1000
+    - epsilon: 1.35
+      alpha: 0.001
+      max_iter: 1000
+    - epsilon: 1.35
+      alpha: 0.01
+      max_iter: 1000
+    - epsilon: 1.5
+      alpha: 1.0e-05
+      max_iter: 1000
+    - epsilon: 1.5
+      alpha: 0.0001
+      max_iter: 1000
+    - epsilon: 1.5
+      alpha: 0.001
+      max_iter: 1000
+    - epsilon: 1.5
+      alpha: 0.01
+      max_iter: 1000
+    - epsilon: 1.75
+      alpha: 1.0e-05
+      max_iter: 1000
+    - epsilon: 1.75
+      alpha: 0.0001
+      max_iter: 1000
+    - epsilon: 1.75
+      alpha: 0.001
+      max_iter: 1000
+    - epsilon: 1.75
+      alpha: 0.01
+      max_iter: 1000
+  - name: lw_ridge
+    fitter: ridge
+    family: calibrated
+    objective: continuous utility, squared loss with L2
+    grid:
+    - alpha: 0.001
+    - alpha: 0.01
+    - alpha: 0.1
+    - alpha: 1.0
+    - alpha: 10.0
+    - alpha: 100.0
+  - name: lw_elasticnet
+    fitter: elasticnet
+    family: calibrated
+    objective: continuous utility, squared loss with L1/L2 mix
+    grid:
+    - alpha: 0.0001
+      l1_ratio: 0.1
+      max_iter: 20000
+    - alpha: 0.0001
+      l1_ratio: 0.5
+      max_iter: 20000
+    - alpha: 0.0001
+      l1_ratio: 0.9
+      max_iter: 20000
+    - alpha: 0.001
+      l1_ratio: 0.1
+      max_iter: 20000
+    - alpha: 0.001
+      l1_ratio: 0.5
+      max_iter: 20000
+    - alpha: 0.001
+      l1_ratio: 0.9
+      max_iter: 20000
+    - alpha: 0.01
+      l1_ratio: 0.1
+      max_iter: 20000
+    - alpha: 0.01
+      l1_ratio: 0.5
+      max_iter: 20000
+    - alpha: 0.01
+      l1_ratio: 0.9
+      max_iter: 20000
+    - alpha: 0.1
+      l1_ratio: 0.1
+      max_iter: 20000
+    - alpha: 0.1
+      l1_ratio: 0.5
+      max_iter: 20000
+    - alpha: 0.1
+      l1_ratio: 0.9
+      max_iter: 20000
+  - name: lw_hist_gbr
+    fitter: hist_gbr
+    family: calibrated
+    objective: continuous utility, sklearn histogram gradient boosting
+    grid:
+    - max_iter: 100
+      learning_rate: 0.05
+      max_leaf_nodes: 7
+      min_samples_leaf: 40
+      l2_regularization: 1.0
+    - max_iter: 300
+      learning_rate: 0.05
+      max_leaf_nodes: 7
+      min_samples_leaf: 40
+      l2_regularization: 1.0
+    - max_iter: 600
+      learning_rate: 0.03
+      max_leaf_nodes: 7
+      min_samples_leaf: 40
+      l2_regularization: 1.0
+    - max_iter: 100
+      learning_rate: 0.1
+      max_leaf_nodes: 15
+      min_samples_leaf: 40
+      l2_regularization: 1.0
+    - max_iter: 300
+      learning_rate: 0.05
+      max_leaf_nodes: 15
+      min_samples_leaf: 40
+      l2_regularization: 1.0
+    - max_iter: 600
+      learning_rate: 0.03
+      max_leaf_nodes: 15
+      min_samples_leaf: 40
+      l2_regularization: 1.0
+    - max_iter: 100
+      learning_rate: 0.1
+      max_leaf_nodes: 31
+      min_samples_leaf: 100
+      l2_regularization: 1.0
+    - max_iter: 300
+      learning_rate: 0.05
+      max_leaf_nodes: 31
+      min_samples_leaf: 100
+      l2_regularization: 1.0
+    - max_iter: 600
+      learning_rate: 0.03
+      max_leaf_nodes: 31
+      min_samples_leaf: 100
+      l2_regularization: 1.0
+    - max_iter: 300
+      learning_rate: 0.05
+      max_leaf_nodes: 15
+      min_samples_leaf: 100
+      l2_regularization: 10.0
+    - max_iter: 600
+      learning_rate: 0.03
+      max_leaf_nodes: 15
+      min_samples_leaf: 100
+      l2_regularization: 10.0
+    - max_iter: 300
+      learning_rate: 0.1
+      max_leaf_nodes: 7
+      min_samples_leaf: 100
+      l2_regularization: 10.0
+  - name: lw_xgb_regression
+    fitter: gbdt_regression
+    family: calibrated
+    objective: continuous utility, XGBoost squared error
+    grid:
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 2
+      learning_rate: 0.1
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 2
+      learning_rate: 0.05
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 2
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 1.0
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.1
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.05
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.05
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 1.0
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.1
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.05
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.05
+      n_estimators: 500
+      subsample: 1.0
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      n_jobs: 1
+    - objective: reg:squarederror
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      n_jobs: 1
+  - name: lw_catboost_regression
+    fitter: catboost_regression
+    family: calibrated
+    objective: continuous utility, CatBoost RMSE
+    grid:
+    - depth: 4
+      learning_rate: 0.1
+      iterations: 300
+      l2_leaf_reg: 3.0
+    - depth: 4
+      learning_rate: 0.05
+      iterations: 300
+      l2_leaf_reg: 3.0
+    - depth: 4
+      learning_rate: 0.05
+      iterations: 600
+      l2_leaf_reg: 10.0
+    - depth: 4
+      learning_rate: 0.03
+      iterations: 600
+      l2_leaf_reg: 10.0
+    - depth: 6
+      learning_rate: 0.1
+      iterations: 300
+      l2_leaf_reg: 3.0
+    - depth: 6
+      learning_rate: 0.05
+      iterations: 300
+      l2_leaf_reg: 3.0
+    - depth: 6
+      learning_rate: 0.05
+      iterations: 600
+      l2_leaf_reg: 10.0
+    - depth: 6
+      learning_rate: 0.03
+      iterations: 600
+      l2_leaf_reg: 10.0
+    - depth: 8
+      learning_rate: 0.1
+      iterations: 300
+      l2_leaf_reg: 3.0
+    - depth: 8
+      learning_rate: 0.05
+      iterations: 300
+      l2_leaf_reg: 10.0
+    - depth: 8
+      learning_rate: 0.05
+      iterations: 600
+      l2_leaf_reg: 10.0
+    - depth: 8
+      learning_rate: 0.03
+      iterations: 600
+      l2_leaf_reg: 10.0
+  - name: lw_small_mlp
+    fitter: small_mlp
+    family: calibrated
+    objective: continuous utility, Smooth-L1 on a small MLP
+    grid:
+    - hidden_dim: 16
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0
+      epochs: 400
+    - hidden_dim: 16
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0001
+      epochs: 400
+    - hidden_dim: 16
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.0003
+      weight_decay: 0.0001
+      epochs: 400
+    - hidden_dim: 16
+      layers: 1
+      dropout: 0.1
+      learning_rate: 0.001
+      weight_decay: 0.001
+      epochs: 400
+    - hidden_dim: 32
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0
+      epochs: 400
+    - hidden_dim: 32
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0001
+      epochs: 400
+    - hidden_dim: 32
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.0003
+      weight_decay: 0.0001
+      epochs: 400
+    - hidden_dim: 32
+      layers: 1
+      dropout: 0.1
+      learning_rate: 0.001
+      weight_decay: 0.001
+      epochs: 400
+    - hidden_dim: 32
+      layers: 2
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0
+      epochs: 400
+    - hidden_dim: 32
+      layers: 2
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0001
+      epochs: 400
+    - hidden_dim: 32
+      layers: 2
+      dropout: 0.0
+      learning_rate: 0.0003
+      weight_decay: 0.0001
+      epochs: 400
+    - hidden_dim: 32
+      layers: 2
+      dropout: 0.1
+      learning_rate: 0.001
+      weight_decay: 0.001
+      epochs: 400
+  - name: lw_ranknet
+    fitter: mlp_ranknet
+    family: ranking
+    objective: within-query utility preferences, RankNet pairwise BCE
+    grid:
+    - hidden_dim: 16
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 16
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0001
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 16
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.0003
+      weight_decay: 0.0001
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 16
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.001
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 32
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 32
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0001
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 32
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.0003
+      weight_decay: 0.0001
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 32
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.001
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 32
+      layers: 2
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 32
+      layers: 2
+      dropout: 0.0
+      learning_rate: 0.001
+      weight_decay: 0.0001
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 32
+      layers: 2
+      dropout: 0.0
+      learning_rate: 0.0003
+      weight_decay: 0.0001
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+    - hidden_dim: 32
+      layers: 2
+      dropout: 0.1
+      learning_rate: 0.001
+      weight_decay: 0.001
+      epochs: 400
+      pair_margin: 1.0
+      max_pairs_per_query: 64
+  - name: lw_xgb_pairwise
+    fitter: xgb_ranker
+    family: ranking
+    objective: within-query pairwise ranking, XGBoost rank:pairwise
+    grid:
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 2
+      learning_rate: 0.1
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 2
+      learning_rate: 0.05
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.1
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.05
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.05
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 5.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 1.0
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 5.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.1
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.05
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      min_child_weight: 5.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.05
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      min_child_weight: 5.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 1.0
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      min_child_weight: 5.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 2
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 1.0
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 5.0
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:pairwise
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.1
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      min_child_weight: 1.0
+      n_jobs: 1
+      label_scale: 1.0
+  - name: lw_lambdamart_aligned
+    fitter: xgb_ranker
+    family: ranking
+    objective: utility-derived 7 grades, LINEAR-gain nDCG LambdaRank
+    grid:
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 2
+      learning_rate: 0.1
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 2
+      learning_rate: 0.05
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 2
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 1.0
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 5.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.1
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.05
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.05
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 5.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 1.0
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 5.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.1
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 1.5
+      min_child_weight: 1.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.05
+      n_estimators: 200
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      min_child_weight: 5.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.05
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      min_child_weight: 5.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 4
+      learning_rate: 0.03
+      n_estimators: 500
+      subsample: 1.0
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      min_child_weight: 5.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: rank:ndcg
+      tree_method: hist
+      max_depth: 3
+      learning_rate: 0.1
+      n_estimators: 500
+      subsample: 0.8
+      colsample_bytree: 1.0
+      reg_lambda: 5.0
+      min_child_weight: 1.0
+      lambdarank_pair_method: mean
+      lambdarank_num_pair_per_sample: 8
+      ndcg_exp_gain: false
+      eval_metric: ndcg@8
+      n_jobs: 1
+      label_scale: 1.0
+  - name: lw_lgbm_lambdarank
+    fitter: lgbm_ranker
+    family: ranking
+    objective: utility-derived 7 grades, LightGBM LambdaRank
+    grid:
+    - objective: lambdarank
+      n_estimators: 200
+      learning_rate: 0.1
+      num_leaves: 7
+      max_depth: 3
+      min_child_samples: 20
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 500
+      learning_rate: 0.05
+      num_leaves: 7
+      max_depth: 3
+      min_child_samples: 20
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 500
+      learning_rate: 0.03
+      num_leaves: 7
+      max_depth: 3
+      min_child_samples: 50
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 200
+      learning_rate: 0.1
+      num_leaves: 15
+      max_depth: 4
+      min_child_samples: 20
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 200
+      learning_rate: 0.05
+      num_leaves: 15
+      max_depth: 4
+      min_child_samples: 20
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 500
+      learning_rate: 0.05
+      num_leaves: 15
+      max_depth: 4
+      min_child_samples: 50
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 500
+      learning_rate: 0.03
+      num_leaves: 15
+      max_depth: 4
+      min_child_samples: 50
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 200
+      learning_rate: 0.1
+      num_leaves: 31
+      max_depth: 6
+      min_child_samples: 50
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 200
+      learning_rate: 0.05
+      num_leaves: 31
+      max_depth: 6
+      min_child_samples: 50
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 500
+      learning_rate: 0.05
+      num_leaves: 31
+      max_depth: 6
+      min_child_samples: 100
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 500
+      learning_rate: 0.03
+      num_leaves: 31
+      max_depth: 6
+      min_child_samples: 100
+      n_jobs: 1
+      label_scale: 1.0
+    - objective: lambdarank
+      n_estimators: 500
+      learning_rate: 0.03
+      num_leaves: 7
+      max_depth: -1
+      min_child_samples: 20
+      n_jobs: 1
+      label_scale: 1.0
+  - name: lw_catboost_yetirank
+    fitter: catboost_ranker
+    family: ranking
+    objective: query-grouped pairwise ranking, CatBoost YetiRank
+    grid:
+    - loss_function: YetiRank
+      depth: 4
+      learning_rate: 0.1
+      iterations: 300
+    - loss_function: YetiRank
+      depth: 4
+      learning_rate: 0.05
+      iterations: 300
+    - loss_function: YetiRank
+      depth: 4
+      learning_rate: 0.03
+      iterations: 600
+    - loss_function: YetiRank
+      depth: 6
+      learning_rate: 0.1
+      iterations: 300
+    - loss_function: YetiRank
+      depth: 6
+      learning_rate: 0.05
+      iterations: 300
+    - loss_function: YetiRank
+      depth: 6
+      learning_rate: 0.03
+      iterations: 600
+    - loss_function: YetiRank
+      depth: 8
+      learning_rate: 0.1
+      iterations: 300
+    - loss_function: YetiRank
+      depth: 8
+      learning_rate: 0.05
+      iterations: 300
+    - loss_function: YetiRank
+      depth: 8
+      learning_rate: 0.03
+      iterations: 600
+  allow_external_calls: false
+  allow_frozen_test: false
+stage2_redesign_crossencoder_rrf2_matched_rawtext:
+  version: stage2-redesign-crossencoder-rrf2-matched-rawtext-v1
+  run_name: cross_encoder_matched
+  output_dir: out/stage2_redesign_crossencoder_matched_rawtext_v1
+  journal_dir: out/stage2_redesign_crossencoder_matched_rawtext_v1_journal
+  audit_output_dir: out/stage2_redesign_crossencoder_matched_pool_audit_rawtext_v1
+  token_audit_output_dir: out/stage2_redesign_crossencoder_matched_token_audit_rawtext_v1
+  features_parquet: out/stage2_redesign_features_rrf2pool_rawtext_v1/stage2_features_rrf2pool.parquet
+  reference_pool_parquet: out/lightweight_scorer_search_dev300_rawtext_v1/oof_predictions.parquet
+  source_config_key: selection_action_space_repair_dev300_rrf3_rawtext
+  corpus: out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+  queries: out/development300_analysis_inputs_v1/development300_queries_normalized.json
+  utility_registry: out/development300_m50_utility_judging_openrouter_coreweave_v1/complete/utility_registry_coverage_complete.jsonl
+  expected_registry_rows: 32388
+  expected_pairs: 15000
+  expected_queries: 300
+  backend: e5
+  model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  token_audit_limits:
+  - 192
+  - 256
+  - 320
+  - 512
+  batch_size: 32
+  warmup_ratio: 0.1
+  predict_batch_size: 64
+  seed: 13
+  max_length: 256
+  epochs: 3.0
+  learning_rate: 3.0e-05
+  tuning:
+    output_dir: out/stage2_redesign_crossencoder_matched_tuning_v1
+    journal_dir: out/stage2_redesign_crossencoder_matched_tuning_v1_journal
+    universe_split_index: 0
+    holdout_queries: 60
+    split_seed: 20260827
+    grid:
+    - learning_rate: 1.0e-05
+      epochs: 2
+      max_length: 192
+    - learning_rate: 2.0e-05
+      epochs: 2
+      max_length: 192
+    - learning_rate: 3.0e-05
+      epochs: 2
+      max_length: 192
+    - learning_rate: 1.0e-05
+      epochs: 3
+      max_length: 192
+    - learning_rate: 2.0e-05
+      epochs: 3
+      max_length: 192
+    - learning_rate: 3.0e-05
+      epochs: 3
+      max_length: 192
+    - learning_rate: 1.0e-05
+      epochs: 2
+      max_length: 256
+    - learning_rate: 2.0e-05
+      epochs: 2
+      max_length: 256
+    - learning_rate: 3.0e-05
+      epochs: 2
+      max_length: 256
+    - learning_rate: 1.0e-05
+      epochs: 3
+      max_length: 256
+    - learning_rate: 2.0e-05
+      epochs: 3
+      max_length: 256
+    - learning_rate: 3.0e-05
+      epochs: 3
+      max_length: 256
+  allow_external_calls: false
+  allow_frozen_test: false
+  crossencoder_load_note: ms-marco-MiniLM-L-6-v2 returns NaN for every pair as loaded
+    on this stack; the weights are finite but a matmul against the live Parameter
+    is not. Clone every parameter after load (p.data = p.data.detach().clone()) and
+    verify the model separates an on-topic from an off-topic pair before trusting
+    any score. See remediation/runners/S1_build_rawtext_arms.py.
+selection_action_space_repair_dev300_rrf3_rawtext:
+  version: selection-action-space-repair-dev300-rrf3-v1
+  output_dir: experiments/selection_action_space_repair_dev300_rrf3_rawtext_unused
+  scope_label: Development300-only rrf3 development-branch contract
+  allow_external_calls: false
+  allow_frozen_test: false
+  remaining_development298_read: true
+  expected_complete_registry_rows: 32388
+  expected_query_count: 300
+  expected_strata_counts:
+    single_need: 150
+    multi_need: 150
+  require_report89_inner_identity: false
+  require_dev100_identity_sanity: false
+  utility_registry: out/development300_m50_utility_judging_openrouter_coreweave_v1/complete/utility_registry_coverage_complete.jsonl
+  dense_memberships: out/development300_m50_preflight_rawtext_v1/dense_m50_memberships.jsonl
+  graph_candidate_views: out/development300_m50_preflight_v1/graph_candidate_views.jsonl
+  split_manifest: out/development300_analysis_inputs_v1/split_manifest.json
+  query_admin: out/development300_stratified_v1/development300_queries_ADMIN.csv
+  queries: out/development300_analysis_inputs_v1/development300_queries_normalized.json
+  corpus: out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+  embeddings:
+    minilm:
+      query: out/development300_analysis_inputs_v1/minilm_query_embeddings.npy
+      corpus: out/sbert_graph_comparison_dev100_v1/sbert_corpus_embeddings.npy
+    e5:
+      query: out/development300_analysis_inputs_v1/e5_query_embeddings.npy
+      corpus: out/depth_graph_utility_community_frontier_dev100_v1/backend_manifests/e5_corpus_embeddings.npy
+  backends:
+  - minilm
+  - e5
+  dense_depths:
+  - 8
+  - 12
+  - 20
+  - 50
+  replacement_budgets:
+  - 0
+  - 1
+  - 2
+  - 4
+  - 8
+  final_k: 8
+  outer_repeats: 5
+  outer_folds: 5
+  inner_folds: 3
+  scorer_training_pool: d50_union_fixed_graph4
+  scorers:
+    candidate_huber:
+      epsilon: 1.35
+      alpha_grid:
+      - 0.001
+      - 0.01
+      - 0.1
+      max_iter: 1000
+    candidate_small_mlp:
+      hidden_grid:
+      - 8
+      - 16
+      weight_decay_grid:
+      - 0.001
+      - 0.01
+      layers: 1
+      dropout: 0.0
+      learning_rate: 0.01
+      epochs: 120
+  bootstrap_samples: 5000
+  bootstrap_seed: 20260805
+stage2_redesign_crossencoder_rrf2_matched_rawtext_len256:
+  version: stage2-redesign-crossencoder-rrf2-matched-rawtext-len256-v1
+  run_name: cross_encoder_matched
+  output_dir: out/stage2_redesign_crossencoder_matched_rawtext_len256_v1
+  journal_dir: out/stage2_redesign_crossencoder_matched_rawtext_len256_v1_journal
+  audit_output_dir: out/stage2_redesign_crossencoder_matched_rawtext_len256_v1_pool_audit
+  token_audit_output_dir: out/stage2_redesign_crossencoder_matched_rawtext_len256_v1_token_audit
+  features_parquet: out/stage2_redesign_features_rrf2pool_rawtext_v1/stage2_features_rrf2pool.parquet
+  reference_pool_parquet: out/lightweight_scorer_search_dev300_rawtext_v1/oof_predictions.parquet
+  source_config_key: selection_action_space_repair_dev300_rrf3_rawtext
+  corpus: out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+  queries: out/development300_analysis_inputs_v1/development300_queries_normalized.json
+  utility_registry: out/development300_m50_utility_judging_openrouter_coreweave_v1/complete/utility_registry_coverage_complete.jsonl
+  expected_registry_rows: 32388
+  expected_pairs: 15000
+  expected_queries: 300
+  backend: e5
+  model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  token_audit_limits:
+  - 192
+  - 256
+  - 320
+  - 512
+  batch_size: 32
+  warmup_ratio: 0.1
+  predict_batch_size: 64
+  seed: 13
+  max_length: 256
+  epochs: 3.0
+  learning_rate: 3.0e-05
+  tuning:
+    output_dir: out/stage2_redesign_crossencoder_matched_tuning_v1
+    journal_dir: out/stage2_redesign_crossencoder_matched_tuning_v1_journal
+    universe_split_index: 0
+    holdout_queries: 60
+    split_seed: 20260827
+    grid:
+    - learning_rate: 1.0e-05
+      epochs: 2
+      max_length: 192
+    - learning_rate: 2.0e-05
+      epochs: 2
+      max_length: 192
+    - learning_rate: 3.0e-05
+      epochs: 2
+      max_length: 192
+    - learning_rate: 1.0e-05
+      epochs: 3
+      max_length: 192
+    - learning_rate: 2.0e-05
+      epochs: 3
+      max_length: 192
+    - learning_rate: 3.0e-05
+      epochs: 3
+      max_length: 192
+    - learning_rate: 1.0e-05
+      epochs: 2
+      max_length: 256
+    - learning_rate: 2.0e-05
+      epochs: 2
+      max_length: 256
+    - learning_rate: 3.0e-05
+      epochs: 2
+      max_length: 256
+    - learning_rate: 1.0e-05
+      epochs: 3
+      max_length: 256
+    - learning_rate: 2.0e-05
+      epochs: 3
+      max_length: 256
+    - learning_rate: 3.0e-05
+      epochs: 3
+      max_length: 256
+  allow_external_calls: false
+  allow_frozen_test: false
+  crossencoder_load_note: ms-marco-MiniLM-L-6-v2 returns NaN for every pair as loaded
+    on this stack; the weights are finite but a matmul against the live Parameter
+    is not. Clone every parameter after load (p.data = p.data.detach().clone()) and
+    verify the model separates an on-topic from an off-topic pair before trusting
+    any score. See remediation/runners/S1_build_rawtext_arms.py.
+  sequence_budget_note: 'max_length=256. The thesis grid searched only {192, 256}
+    and selected 256; the checkpoint''s positional limit is 512. Measured truncation
+    on the closed600 probe: at 256, 54.4% of pairs overflow, 39.5% of candidates are
+    cut and the query a candidate is scored against varies by a median 22 tokens across
+    that query''s own candidates; at 512 those fall to 13.3%, 10.5% and 0. The two
+    lengths are trained as separate versions and must not be pooled or compared row-by-row
+    with the frozen 256 results.'
+  do_not_mix: len256 artefacts are a distinct version; never merge with the other
+    length or with the superseded frozen cross-encoder outputs
+  blocked_until:
+  - the graph rebuild fixes the RRF2 pool and the pool equivalence is re-verified
+  - the Stage-2 contract's 9,707 missing judgments are filled
+  - the cross-encoder NaN is worked around (clone every parameter after load); this
+    needs a change to run_stage2_redesign_crossencoder.py, which is verified code
+    and requires explicit approval
+
+evidence_signal_triangulation:
+  version: evidence-signal-triangulation-dev100-v1
+  allow_external_calls: false
+  allow_frozen_test: false
+  output_dir: out/evidence_signal_triangulation_dev100_v1
+  formal_union: out/depth_graph_utility_community_frontier_dev100_m50_v2/m50_residual_preflight/formal_union_manifest.jsonl
+  utility_registry: out/depth_graph_utility_community_frontier_dev100_m50_judging_v1/complete/utility_registry_coverage_complete.jsonl
+  queries: out/section17_dev_100_v2/section17_dev_queries.csv
+  query_admin: out/section17_dev_100_v2/section17_dev_queries_ADMIN.csv
+  corpus: out/hipporag_official_adapter/adhd_peer_support_validation_corpus.json
+  community_reference_dir: out/community_reply_aux_dev100_v1
+  community_reference_inventory: out/community_reply_aux_dev100_v1/community_reply_reference_inventory.jsonl
+  community_embedding_prior_dir: out/depth_graph_utility_community_frontier_dev100_m50_community_v2
+  dense_memberships: out/depth_graph_utility_community_frontier_dev100_m50_v2/m50_residual_preflight/dense_m50_memberships.jsonl
+  dense_oof_actions: out/depth_graph_utility_community_frontier_dev100_m50_dense_v1/m50_dense_oof_actions.jsonl
+  graph_oof_actions: out/depth_graph_utility_community_frontier_dev100_m50_graph_v2/m50_graph_oof_actions.jsonl
+  matched_oof_actions: out/depth_graph_utility_community_frontier_dev100_m50_matched_v1/m50_matched_budget_oof_actions.jsonl
+  graph_candidate_views: out/depth_graph_utility_community_frontier_dev100_m50_v2/m50_residual_preflight/graph_candidate_views.jsonl
+  minilm_query_embeddings: out/sbert_graph_comparison_dev100_v1/sbert_query_embeddings.npy
+  minilm_corpus_embeddings: out/sbert_graph_comparison_dev100_v1/sbert_corpus_embeddings.npy
+  e5_query_embeddings: out/depth_graph_utility_community_frontier_dev100_v1/backend_manifests/e5_query_embeddings.npy
+  e5_corpus_embeddings: out/depth_graph_utility_community_frontier_dev100_v1/backend_manifests/e5_corpus_embeddings.npy
+  expected_formal_pairs: 9163
+  expected_complete_registry_rows: 19813
+  expected_queries: 100
+  expected_corpus_comments: 19013
+  expected_hidden_replies: 1749
+  bootstrap_seed: 20260731
+  bootstrap_draws: 5000
+stage2_redesign_crossencoder_rrf2_matched_rawtext_len512:
+  version: stage2-redesign-crossencoder-rrf2-matched-rawtext-len512-v1
+  run_name: cross_encoder_matched
+  output_dir: out/stage2_redesign_crossencoder_matched_rawtext_len512_v1
+  journal_dir: out/stage2_redesign_crossencoder_matched_rawtext_len512_v1_journal
+  audit_output_dir: out/stage2_redesign_crossencoder_matched_rawtext_len512_v1_pool_audit
+  token_audit_output_dir: out/stage2_redesign_crossencoder_matched_rawtext_len512_v1_token_audit
+  features_parquet: out/stage2_redesign_features_rrf2pool_rawtext_v1/stage2_features_rrf2pool.parquet
+  reference_pool_parquet: out/lightweight_scorer_search_dev300_rawtext_v1/oof_predictions.parquet
+  source_config_key: selection_action_space_repair_dev300_rrf3_rawtext
+  corpus: out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+  queries: out/development300_analysis_inputs_v1/development300_queries_normalized.json
+  utility_registry: out/development300_m50_utility_judging_openrouter_coreweave_v1/complete/utility_registry_coverage_complete.jsonl
+  expected_registry_rows: 32388
+  expected_pairs: 15000
+  expected_queries: 300
+  backend: e5
+  model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  token_audit_limits:
+  - 192
+  - 256
+  - 320
+  - 512
+  batch_size: 32
+  warmup_ratio: 0.1
+  predict_batch_size: 64
+  seed: 13
+  max_length: 512
+  epochs: 3.0
+  learning_rate: 3.0e-05
+  tuning:
+    output_dir: out/stage2_redesign_crossencoder_matched_tuning_v1
+    journal_dir: out/stage2_redesign_crossencoder_matched_tuning_v1_journal
+    universe_split_index: 0
+    holdout_queries: 60
+    split_seed: 20260827
+    grid:
+    - learning_rate: 1.0e-05
+      epochs: 2
+      max_length: 192
+    - learning_rate: 2.0e-05
+      epochs: 2
+      max_length: 192
+    - learning_rate: 3.0e-05
+      epochs: 2
+      max_length: 192
+    - learning_rate: 1.0e-05
+      epochs: 3
+      max_length: 192
+    - learning_rate: 2.0e-05
+      epochs: 3
+      max_length: 192
+    - learning_rate: 3.0e-05
+      epochs: 3
+      max_length: 192
+    - learning_rate: 1.0e-05
+      epochs: 2
+      max_length: 256
+    - learning_rate: 2.0e-05
+      epochs: 2
+      max_length: 256
+    - learning_rate: 3.0e-05
+      epochs: 2
+      max_length: 256
+    - learning_rate: 1.0e-05
+      epochs: 3
+      max_length: 256
+    - learning_rate: 2.0e-05
+      epochs: 3
+      max_length: 256
+    - learning_rate: 3.0e-05
+      epochs: 3
+      max_length: 256
+  allow_external_calls: false
+  allow_frozen_test: false
+  crossencoder_load_note: ms-marco-MiniLM-L-6-v2 returns NaN for every pair as loaded
+    on this stack; the weights are finite but a matmul against the live Parameter
+    is not. Clone every parameter after load (p.data = p.data.detach().clone()) and
+    verify the model separates an on-topic from an off-topic pair before trusting
+    any score. See remediation/runners/S1_build_rawtext_arms.py.
+  sequence_budget_note: 'max_length=512. The thesis grid searched only {192, 256}
+    and selected 256; the checkpoint''s positional limit is 512. Measured truncation
+    on the closed600 probe: at 256, 54.4% of pairs overflow, 39.5% of candidates are
+    cut and the query a candidate is scored against varies by a median 22 tokens across
+    that query''s own candidates; at 512 those fall to 13.3%, 10.5% and 0. The two
+    lengths are trained as separate versions and must not be pooled or compared row-by-row
+    with the frozen 256 results.'
+  do_not_mix: len512 artefacts are a distinct version; never merge with the other
+    length or with the superseded frozen cross-encoder outputs
+  blocked_until:
+  - the graph rebuild fixes the RRF2 pool and the pool equivalence is re-verified
+  - the Stage-2 contract's 9,707 missing judgments are filled
+  - the cross-encoder NaN is worked around (clone every parameter after load); this
+    needs a change to run_stage2_redesign_crossencoder.py, which is verified code
+    and requires explicit approval

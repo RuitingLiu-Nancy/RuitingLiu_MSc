@@ -1,0 +1,45 @@
+{
+  "source_repository": "https://github.com/OSU-NLP-Group/HippoRAG",
+  "paper": "https://arxiv.org/abs/2502.14802",
+  "paper_release_commit": "191f281122e2437743daf1dd2dae23059a14c088",
+  "maintained_pinned_commit": "ad30fc3e2062202d9e975e32cd28212424a56ccb",
+  "paper_configuration": {
+    "openie_and_recognition_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "embedding_model": "nvidia/NV-Embed-v2",
+    "qa_reader": "meta-llama/Llama-3.3-70B-Instruct",
+    "linking_top_k": 5,
+    "retrieval_top_k": 200,
+    "qa_top_k": 5,
+    "damping": 0.5,
+    "metric_retrieval": "passage Recall@5",
+    "metric_qa": "token F1"
+  },
+  "paper_reference": {
+    "musique": {
+      "queries": 1000,
+      "corpus": 11656,
+      "hipporag2_recall_at_5": 0.747,
+      "hipporag2_without_filter_recall_at_5": 0.730,
+      "nv_embed_v2_recall_at_5": 0.697,
+      "hipporag2_qa_f1": 0.486,
+      "llama_graph_statistics": {
+        "phrase_nodes": 85288,
+        "passage_nodes": 11656,
+        "total_nodes": 96944,
+        "extracted_edges": 140830,
+        "synonym_edges": 1125951,
+        "context_edges": 132586,
+        "total_edges": 1399367
+      }
+    },
+    "hotpotqa": {
+      "queries": 1000,
+      "corpus": 9811,
+      "hipporag2_recall_at_5": 0.963,
+      "hipporag2_without_filter_recall_at_5": 0.954,
+      "nv_embed_v2_recall_at_5": 0.945,
+      "hipporag2_qa_f1": 0.755
+    }
+  },
+  "reference_location": "HippoRAG 2 paper, Tables 2-4, arXiv:2502.14802v2"
+}

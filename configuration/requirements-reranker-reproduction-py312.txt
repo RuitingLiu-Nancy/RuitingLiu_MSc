@@ -1,0 +1,19 @@
+# Exact add-on to the graph-community Python 3.12 environment used for the
+# nested Linear/LambdaMART/MLP reranker revalidation.
+-r requirements-graph-community-replay-py312.txt
+filelock==3.32.0
+fsspec==2026.6.0
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+mpmath==1.3.0
+PyYAML==6.0.3
+pyarrow==25.0.0
+sentence-transformers==5.6.0
+transformers==5.13.0
+catboost==1.2.10
+boto3==1.43.38
+openai==2.43.0
+setuptools==83.0.0
+sympy==1.14.0
+torch==2.7.1
+xgboost==3.0.5

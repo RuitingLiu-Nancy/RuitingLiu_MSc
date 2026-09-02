@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "utility-aware-cross-thread-evidence"
+version = "1.0.0"
+description = "Utility-aware cross-thread evidence retrieval and selection for online ADHD communities"
+requires-python = ">=3.12,<3.13"
+
+[tool.setuptools.packages.find]
+include = [
+  "data_preparation*",
+  "candidate_pool*",
+  "fusion*",
+  "utility_scoring*",
+  "evidence_selection*",
+  "evaluation*",
+  "figures*",
+  "configuration*",
+  "shared*",
+]
+
+[tool.setuptools.package-data]
+configuration = ["*.json", "*.txt", "*.yaml"]

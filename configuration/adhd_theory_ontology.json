@@ -1,0 +1,46 @@
+{
+  "version": "adhd-peer-support-theory-v1",
+  "description": "Literature-anchored support-function and executive-function spine. Fallback/other classes are deliberately excluded from retrieval bridges.",
+  "concepts": [
+    {"id": "support.informational", "kind": "support_function", "label": "informational support", "description": "Practical information, advice, strategies, explanations, or guidance that helps someone understand or act on a problem.", "anchor": "Cutrona & Russell 1990; Isser & Gazit 2025"},
+    {"id": "support.emotional", "kind": "support_function", "label": "emotional support", "description": "Warmth, care, empathy, reassurance, and acknowledgment of distress or difficult feelings.", "anchor": "Cutrona & Russell 1990; Isser & Gazit 2025"},
+    {"id": "support.esteem", "kind": "support_function", "label": "esteem support", "description": "Affirming competence, worth, effort, identity, or confidence while reducing shame and self-blame.", "anchor": "Cutrona & Russell 1990; Isser & Gazit 2025"},
+    {"id": "support.experiential", "kind": "support_function", "label": "experiential sharing", "description": "A first-person lived experience showing what a similar situation felt like, what happened, or what helped.", "anchor": "peer-support project adaptation"},
+    {"id": "support.resource", "kind": "support_function", "label": "resource referral", "description": "A referral to a service, professional, tool, community, document, or other external source of help.", "anchor": "peer-support project adaptation"},
+    {"id": "support.safety", "kind": "support_function", "label": "safety response", "description": "Risk-aware support that sets a boundary, encourages urgent or professional help, or avoids potentially harmful advice.", "anchor": "peer-support project adaptation"},
+
+    {"id": "strategy.organizational", "kind": "strategy_domain", "label": "organizational strategies", "description": "External structure such as lists, reminders, calendars, routines, planning, breaking tasks down, or arranging the environment.", "anchor": "Canela et al. 2017"},
+    {"id": "strategy.attentional", "kind": "strategy_domain", "label": "attentional strategies", "description": "Ways to initiate, direct, sustain, recover, or protect attention, including reducing distraction and using salient cues.", "anchor": "Canela et al. 2017"},
+    {"id": "strategy.motoric", "kind": "strategy_domain", "label": "motoric strategies", "description": "Movement, exercise, fidgeting, body-based activation, or changing physical state to support action and attention.", "anchor": "Canela et al. 2017"},
+    {"id": "strategy.social", "kind": "strategy_domain", "label": "social strategies", "description": "Body doubling, accountability, asking for help, communication, shared routines, or using another person's presence.", "anchor": "Canela et al. 2017"},
+    {"id": "strategy.pharmacological", "kind": "strategy_domain", "label": "pharmacological strategies", "description": "Medication-related experiences or discussions of treatment effects, access, timing, and professional medication support.", "anchor": "Canela et al. 2017"},
+
+    {"id": "ef.time", "kind": "ef_mechanism", "label": "time management", "description": "Sensing time, estimating duration, planning ahead, meeting deadlines, transitioning, and acting with future consequences in mind.", "anchor": "Barkley BDEFS"},
+    {"id": "ef.organization", "kind": "ef_mechanism", "label": "organization and problem solving", "description": "Holding goals in mind, sequencing steps, organizing materials or thoughts, prioritizing, and solving multi-step problems.", "anchor": "Barkley BDEFS"},
+    {"id": "ef.restraint", "kind": "ef_mechanism", "label": "self restraint", "description": "Inhibiting impulses, pausing before acting, resisting distraction, and controlling an immediate response.", "anchor": "Barkley BDEFS"},
+    {"id": "ef.motivation", "kind": "ef_mechanism", "label": "self motivation", "description": "Starting and persisting with effort when reward is delayed, tasks are boring, or activation is difficult.", "anchor": "Barkley BDEFS"},
+    {"id": "ef.emotion", "kind": "ef_mechanism", "label": "emotion regulation", "description": "Modulating frustration, rejection sensitivity, overwhelm, anger, shame, anxiety, or other emotions that disrupt action.", "anchor": "Barkley BDEFS"},
+
+    {"id": "empathy.reaction", "kind": "epitome_mechanism", "label": "emotional reaction", "description": "Expressing an appropriate emotional response to the person's situation, such as concern, warmth, or compassion.", "anchor": "Sharma et al. 2020 EPITOME"},
+    {"id": "empathy.interpretation", "kind": "epitome_mechanism", "label": "interpretation", "description": "Communicating an understanding of the person's feelings, situation, or implied experience without overclaiming.", "anchor": "Sharma et al. 2020 EPITOME"},
+    {"id": "empathy.exploration", "kind": "epitome_mechanism", "label": "exploration", "description": "Inviting the person to elaborate on feelings, circumstances, needs, or possible meanings through attentive questions.", "anchor": "Sharma et al. 2020 EPITOME"}
+  ],
+  "hierarchy_edges": [
+    {"source": "support.informational", "target": "strategy.organizational", "relation": "organizes"},
+    {"source": "support.informational", "target": "strategy.attentional", "relation": "organizes"},
+    {"source": "support.informational", "target": "strategy.motoric", "relation": "organizes"},
+    {"source": "support.informational", "target": "strategy.social", "relation": "organizes"},
+    {"source": "support.informational", "target": "strategy.pharmacological", "relation": "organizes"},
+    {"source": "support.informational", "target": "ef.time", "relation": "explains"},
+    {"source": "support.informational", "target": "ef.organization", "relation": "explains"},
+    {"source": "support.informational", "target": "ef.restraint", "relation": "explains"},
+    {"source": "support.informational", "target": "ef.motivation", "relation": "explains"},
+    {"source": "support.informational", "target": "ef.emotion", "relation": "explains"},
+    {"source": "support.emotional", "target": "empathy.reaction", "relation": "realized_by"},
+    {"source": "support.emotional", "target": "empathy.interpretation", "relation": "realized_by"},
+    {"source": "support.emotional", "target": "empathy.exploration", "relation": "realized_by"},
+    {"source": "support.esteem", "target": "empathy.reaction", "relation": "realized_by"},
+    {"source": "support.esteem", "target": "empathy.interpretation", "relation": "realized_by"},
+    {"source": "support.esteem", "target": "empathy.exploration", "relation": "realized_by"}
+  ]
+}
