@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# 【文件 105】读取冻结 Stage1 Oracle 曲线表，绘制绝对值及差值面板
+# 【流程位置】结果可视化；所属包：figures
+# 【主要函数】main
+
 """Stage-1 candidate-pool figure, revised per project owner 2026-08-25.
 
 Changes vs the executor's version:

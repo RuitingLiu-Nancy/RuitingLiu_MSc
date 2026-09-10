@@ -1,3 +1,14 @@
+# 【文件 109】统一外部聊天模型传输、重试与解析接口
+# 【流程位置】共享输入输出与模型客户端；所属包：shared
+# 【主要函数】OpenRouterHTTPError, requesty_model_identity_matches, call_openrouter_record,
+# call_requesty_record, ClaudeCodeGenerationError, claude_code_runtime_contract,
+# claude_code_auth_status, call_claude_code_record
+# 【依赖文件】configuration/__init__.py
+# 【调用方】data_preparation/entity_processing/open_entity_extraction.py
+# 【调用方】candidate_pool/retrieval/query_rewrite.py
+# 【调用方】candidate_pool/run_official_hipporag_bedrock.py
+# 【调用方】utility_scoring/annotation/run_top3_residual_judging.py
+
 """Shared LLM client — the single entry point for all model calls.
 
 Extracted verbatim (logic-preserving) from resonance_rag/resonance_oracle.py so

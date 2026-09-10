@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+# 【文件 053】检查身份与覆盖后生成残余判分包
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring/annotation
+# 【主要函数】exact_pairs, read_json_object, write_json_exclusive, reject_drift_judging_test_path,
+# load_preflight_config, resolve_cfg_path, provider_payload, assert_payload_blind
+# 【配置】configuration/params.yaml → coverage_complete_residual_judging
+# 【输入接口】rows, path, config, cfg, query, registry 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/utility.py
+# 【依赖文件】utility_scoring/annotation/__init__.py
+# 【依赖文件】utility_scoring/annotation/run_top3_residual_judging.py
+# 【调用方】fusion/run_depth_graph_utility_community_frontier.py
+
 """Fail-closed preparation for coverage-complete drift-rescue judging.
 
 ``preflight`` is local-only.  It verifies the two report-91 residual manifests,

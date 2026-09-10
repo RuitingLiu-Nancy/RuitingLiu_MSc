@@ -1,3 +1,11 @@
+# 【文件 059】校验并解析 LUAD 实验配置，默认参数仍来自中央 YAML
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring/learned_diffusion
+# 【主要函数】LUADConfig, load_config
+# 【依赖文件】configuration/__init__.py
+# 【调用方】utility_scoring/learned_diffusion/__init__.py
+# 【调用方】utility_scoring/learned_diffusion/data/graph_adapter.py
+# 【调用方】utility_scoring/learned_diffusion/training/trainer.py
+
 """Configuration for the validation-only LUAD seed pilot.
 
 All defaults live in ``configuration/params.yaml``.  The dataclass only validates and

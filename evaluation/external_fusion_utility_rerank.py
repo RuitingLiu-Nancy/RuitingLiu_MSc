@@ -1,3 +1,16 @@
+# 【文件 087】对外部路线平衡池进行效用重排实验
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】_paired, evaluate_gold_sensitivity, analyse_rule_disagreement, analyse_model_disagreement,
+# consensus_core_sensitivity, main
+# 【输入接口】path, scores, rows 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】data_preparation/sampling/sample_human_annotation_candidates.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/quality_diversity_rerank.py
+# 【依赖文件】evaluation/statistics.py
+# 【调用方】evaluation/pooled_route_utility.py
+# 【调用方】evaluation/same_post_shortcut_audit.py
+
 """Utility reranking on the frozen partial-official route-balanced pool.
 
 This adapter is intentionally separate from the internal evidence-pool runner:
@@ -173,6 +186,11 @@ def _residual_rankings(
     return result
 
 
+# 【函数 087.08】_paired：对同查询的两个条件做配对比较
+# 【输入】left: dict, right: dict, metric: str, seed: int
+# 【实现】遍历或迭代输入；调用 bootstrap_ci, np.mean, np.asarray
+# 【返回】{'queries': len(ids), 'mean_delta': float(np.mean(delta)), 'bootstrap_95_ci': [lo, hi],
+# 'positive_query_share': float(np.mean(np.asarray(del
 def _paired(left: dict, right: dict, metric: str, seed: int) -> dict:
     ids = sorted(set(left) & set(right))
     delta = [left[q][metric] - right[q][metric] for q in ids]

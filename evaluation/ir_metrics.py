@@ -1,3 +1,22 @@
+# 【文件 089】提供 Recall、MRR、nDCG 等共享检索评价实现
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】recall_at, precision_at, f1_at, hit_at, mrr, ndcg_at, graded_ndcg_at, average_precision
+# 【输入接口】rows 等函数参数；返回值及写出操作见对应函数
+# 【调用方】utility_scoring/annotation/run_top3_residual_judging.py
+# 【调用方】utility_scoring/learned_diffusion/reranker_validation.py
+# 【调用方】utility_scoring/learned_diffusion/training/trainer.py
+# 【调用方】evidence_selection/run_selection_action_space_repair.py
+# 【调用方】evidence_selection/run_strict_sbert_mixed_selector.py
+# 【调用方】evaluation/community_reply_auxiliary.py
+# 【调用方】evaluation/external_fusion_utility_rerank.py
+# 【调用方】evaluation/fusion_strategy_ablation.py
+# 【调用方】evaluation/pooled_route_utility.py
+# 【调用方】evaluation/quality_diversity_rerank.py
+# 【调用方】evaluation/run_closed600_e5_lopo_preflight.py
+# 【调用方】evaluation/same_post_shortcut_audit.py
+# 【调用方】evaluation/score_multihop_retrieval.py
+# 【调用方】evaluation/two_graph_compare.py
+
 """Full IR metric set for ranked retrieval — shared by all eval scripts.
 
 A single, dependency-free implementation of the standard information-retrieval

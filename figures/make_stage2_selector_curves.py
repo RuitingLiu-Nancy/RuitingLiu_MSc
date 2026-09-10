@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 【文件 106】读取描述性选择曲线并标出嵌套选参位置
+# 【流程位置】结果可视化；所属包：figures
+# 【主要函数】render_all_models, main
+# 【输入接口】rows, path, output 等函数参数；返回值及写出操作见对应函数
+
 """Publication figures for the two Stage-2 selector sweeps.
 
 Reads only the descriptive curves the matrix builder emitted; computes nothing.

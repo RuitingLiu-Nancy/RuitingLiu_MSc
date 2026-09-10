@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# 【文件 008】读取评论、调用外部抽取提示并解析开放实体与关系
+# 【流程位置】数据准备与分区；所属包：data_preparation/entity_processing
+# 【主要函数】system_prompt, build_prompt, read_rows, to_record, parse_json_object,
+# build_json_retry_prompt, norm_text, clean_kind
+# 【输入接口】path, input 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】shared/llm_client.py
+# 【调用方】data_preparation/entity_processing/05_extract_open_entities.py
+# 【调用方】data_preparation/entity_processing/06_extract_entities_batch.py
+
 """Open lived-experience entity extraction for ADHD Reddit comments.
 
 This is intentionally looser than llm_extract_entities_v2.py:

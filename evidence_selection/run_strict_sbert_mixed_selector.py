@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+# 【文件 081】在同编码器混合池上训练和比较嵌套 OOF 选择器
+# 【流程位置】固定数量的证据选择；所属包：evidence_selection
+# 【主要函数】MixedDataset, PairDataset, run, refresh_existing_diagnostics, main
+# 【输入接口】path, rows, scores, cfg, config 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/analyze_strict_sbert_graph_oracle.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/statistics.py
+# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
+# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【调用方】evidence_selection/run_strict_native_graph_conservative_policy.py
+
 """Nested-OOF mixed-pool selectors for the fully judged strict-SBERT pool.
 
 This experiment answers a narrower question than the Oracle analysis:

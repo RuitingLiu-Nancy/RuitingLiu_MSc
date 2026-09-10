@@ -1,3 +1,11 @@
+# 【文件 032】从官方图截取查询局部子图，使用 PCST 选择后映射回评论
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】LocalPCSTParameters, LocalProblem, solve_pcst, LocalPCSTRetriever, install_local_pcst
+# 【输入接口】query, scores 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/official_graph_adapter.py
+# 【调用方】candidate_pool/retrieval/multi_pcst.py
+# 【调用方】candidate_pool/run_official_hipporag_bedrock.py
+
 """Training-free local PCST retrieval on the immutable Official HippoRAG2 graph.
 
 This is an adaptation of G-Retriever's PCST selection core, not a reproduction

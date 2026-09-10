@@ -1,3 +1,28 @@
+# 【文件 090】核对效用标签字段、身份和覆盖完整性，拒绝把缺标签当负例
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】CompletenessResult, assess_utility_v2_judgment, complete_utility_v2_rows
+# 【输入接口】rows 等函数参数；返回值及写出操作见对应函数
+# 【调用方】candidate_pool/analyze_strict_sbert_graph_oracle.py
+# 【调用方】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【调用方】candidate_pool/run_m50_dense_frontier_analysis.py
+# 【调用方】candidate_pool/run_m50_graph_frontier_analysis.py
+# 【调用方】fusion/run_depth_graph_utility_community_frontier.py
+# 【调用方】utility_scoring/annotation/run_coverage_complete_residual_judging.py
+# 【调用方】utility_scoring/annotation/run_top3_residual_judging.py
+# 【调用方】utility_scoring/build_stage2_redesign_features.py
+# 【调用方】utility_scoring/run_stage2_redesign_crossencoder.py
+# 【调用方】utility_scoring/stage2_training_contract.py
+# 【调用方】evidence_selection/run_selection_action_space_repair.py
+# 【调用方】evidence_selection/run_set_aware_selection_ablation.py
+# 【调用方】evidence_selection/run_strict_native_graph_conservative_policy.py
+# 【调用方】evidence_selection/run_strict_sbert_mixed_selector.py
+# 【调用方】evaluation/analyze_rq2b_set_correspondence.py
+# 【调用方】evaluation/community_reply_auxiliary.py
+# 【调用方】evaluation/confirmatory_test200_rq2b.py
+# 【调用方】evaluation/fusion_strategy_ablation.py
+# 【调用方】evaluation/run_evidence_signal_triangulation.py
+# 【调用方】evaluation/run_m50_community_frontier_analysis.py
+
 """Canonical completeness checks for utility-v2 judgment registries.
 
 The legacy ``judgment_status`` field describes candidate-pool state and is not

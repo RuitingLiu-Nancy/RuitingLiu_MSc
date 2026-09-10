@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+# 【文件 101】比较本体与社区两类结构及不同检索路线
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】rank_from_scores, rrf_fuse, minmax, scored_run, scored_dicts_to_run, fuse_rrf_runs,
+# fuse_cc_runs, load_entity_communities
+# 【输入接口】scores, source, path 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/backends.py
+# 【依赖文件】candidate_pool/retrieval/base_retriever.py
+# 【依赖文件】candidate_pool/retrieval/multihop.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/safety_filter.py
+
 """2 x 3 retrieval-layer comparison: structure source x retrieval route.
 
 Question this answers
@@ -83,6 +95,10 @@ def rank_from_scores(scores: dict[int, float], cmt_ids: list[str]) -> list[str]:
     return [cmt_ids[i] for i in sorted(scores, key=lambda i: -scores[i])]
 
 
+# 【函数 101.02】rrf_fuse：调用未截断RRF分数，按分数排序取前k，再把分数与候选原始元数据组合返回
+# 【输入】rank_lists: dict[str, list[str]], weights: dict[str, float] | None=None, k0: int=60
+# 【实现】遍历或迭代输入；调用 defaultdict, rank_lists.items, weights.get
+# 【返回】sorted(score, key=lambda c: -score[c])
 def rrf_fuse(rank_lists: dict[str, list[str]], weights: dict[str, float] | None = None,
              k0: int = 60) -> list[str]:
     weights = weights or {}

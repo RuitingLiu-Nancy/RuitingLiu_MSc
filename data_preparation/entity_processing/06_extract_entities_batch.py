@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+# 【文件 004】以 OpenAI Batch 传输实体抽取请求，并复用共同解析器
+# 【流程位置】数据准备与分区；所属包：data_preparation/entity_processing
+# 【主要函数】cmd_prepare, cmd_submit, cmd_fetch, main
+# 【输入接口】path, input 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】data_preparation/entity_processing/__init__.py
+# 【依赖文件】data_preparation/entity_processing/open_entity_extraction.py
+
 """Batch-API version of open-entity extraction (OpenAI ONLY).
 
 This script implements the OpenAI Batch transport. Other hosted providers can

@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+# 【文件 018】后验比较同编码器 Dense 与 Graph 候选池的已判分 Oracle 上限
+# 【流程位置】候选访问与图检索；所属包：candidate_pool
+# 【主要函数】dense_reproduction_audit, oracle_analysis, balanced_oracle_pilot, main
+# 【输入接口】path, rows, candidate, query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【调用方】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【调用方】fusion/run_depth_graph_utility_community_frontier.py
+# 【调用方】evidence_selection/run_selection_action_space_repair.py
+# 【调用方】evidence_selection/run_strict_native_graph_conservative_policy.py
+# 【调用方】evidence_selection/run_strict_sbert_mixed_selector.py
+# 【调用方】evaluation/confirmatory_test200_rq2b.py
+
 """Audit strict SBERT reproduction and estimate graph candidate-pool oracles.
 
 The comparison is intentionally backend-matched:

@@ -1,3 +1,26 @@
+# 【文件 084】读取隐藏社区回复并编码，评价已冻结证据集合的对齐和覆盖
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】now, read_jsonl, write_json, write_jsonl, sha256_bytes, sha256_file, canonical_text,
+# text_sha
+# 【输入接口】path, rows, config, output, candidate 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/statistics.py
+# 【调用方】fusion/run_depth_graph_utility_community_frontier.py
+# 【调用方】utility_scoring/build_stage2_redesign_features.py
+# 【调用方】utility_scoring/build_stage2_redesign_features_rrf2pool.py
+# 【调用方】utility_scoring/run_lightweight_scorer_search_dev300.py
+# 【调用方】utility_scoring/run_rq2b_scorer_family_oof_dev300.py
+# 【调用方】utility_scoring/run_stage2_redesign_crossencoder.py
+# 【调用方】evidence_selection/run_rq2b_symmetric_hyperparameter_selection.py
+# 【调用方】evidence_selection/run_set_aware_selection_ablation.py
+# 【调用方】evaluation/analyze_rq2b_set_correspondence.py
+# 【调用方】evaluation/fusion_strategy_ablation.py
+# 【调用方】evaluation/run_evidence_signal_triangulation.py
+# 【调用方】evaluation/run_m50_community_frontier_analysis.py
+# 【调用方】evaluation/run_stage2_community_dev300_complete.py
+
 """Hidden-community-reply auxiliary evaluation for frozen evidence sets.
 
 Phase 1 is deliberately local and post-hoc: it inventories original-thread
@@ -480,6 +503,10 @@ def alignment(candidate_texts: list[str], reply_texts: list[str], embeddings: di
     }
 
 
+# 【函数 084.22】bidirectional_f：组合候选对齐与回复覆盖两个方向
+# 【输入】cra: float, rcc: float, beta: float=1.0
+# 【实现】计算细节见紧接的函数体
+# 【返回】0.0 if denominator == 0 else float((1.0 + beta_sq) * cra * rcc / denominator)
 def bidirectional_f(cra: float, rcc: float, beta: float = 1.0) -> float:
     """F-beta over candidate alignment (precision-like) and reply coverage (recall-like)."""
     beta_sq = beta * beta

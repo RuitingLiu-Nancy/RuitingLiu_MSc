@@ -1,4 +1,20 @@
 #!/usr/bin/env python3
+# 【文件 074】对同一问题与评论原文联合编码，以连续效用微调 MiniLM CE
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring
+# 【主要函数】_universe, _texts_for, _smooth_l1_loss_class, _stabilize_cross_encoder, run, zero_shot,
+# closed600_transfer, _tuning_split
+# 【配置】configuration/params.yaml → stage2_redesign_crossencoder_rrf2_matched_rawtext_len256
+# 【输入输出】output_dir=out/stage2_redesign_crossencoder_matched_rawtext_len256_v1
+# 【输入输出】journal_dir=out/stage2_redesign_crossencoder_matched_rawtext_len256_v1_journal
+# 【输入输出】features_parquet=out/stage2_redesign_features_rrf2pool_rawtext_v1/stage2_features_rrf2pool.parquet
+# 【输入输出】corpus=out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+# 【输入输出】queries=out/development300_analysis_inputs_v1/development300_queries_normalized.json
+# 【输入输出】utility_registry=out/development300_m50_utility_judging_openrouter_coreweave_v1/complete/utility_registry_coverage_complete.jsonl
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】utility_scoring/stage2_training_contract.py
+
 """Experiment 5: the utility-aware MiniLM cross-encoder reference.
 
 SPEC section 16 asks for exactly one lightweight neural text-interaction model,
@@ -75,6 +91,13 @@ def _read_jsonl(path: Path) -> list[dict]:
         return [json.loads(line) for line in handle]
 
 
+# 【函数 074.03】_universe：将固定训练池身份、原文、银标签及冻结分区对齐成CE共同数据范围
+# 【输入】cfg: dict[str, Any]
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 pq.read_table(cfg['features_parquet']).to_pylist, pq.read_table,
+# defaultdict, by_query[qid].append, json.loads, Path(cfg['corpus']).read_text, Path,
+# Path(cfg['queries']).read_text
+# 【返回】{'pairs': pairs, 'by_query': dict(by_query), 'corpus_text': corpus_text, 'query_text':
+# query_text, 'utility': utility, 'contract': contract,
 def _universe(cfg: dict[str, Any]) -> dict[str, Any]:
     """Pairs, texts, labels and the frozen split contract for one training pool.
 
@@ -119,6 +142,10 @@ def _universe(cfg: dict[str, Any]) -> dict[str, Any]:
             "splits": contract["splits"]}
 
 
+# 【函数 074.04】_texts_for：按query–candidate ID对查找问题与评论文本，生成CE联合输入的文本对
+# 【输入】universe: dict[str, Any], qids: list[str]
+# 【实现】遍历或迭代输入；调用 q.append, c.append, y.append, keys.append
+# 【返回】(q, c, y, keys)
 def _texts_for(universe: dict[str, Any], qids: list[str]):
     q, c, y, keys = [], [], [], []
     for qid in qids:
@@ -139,6 +166,10 @@ def _spearman(predicted, actual) -> float | None:
     return None if np.isnan(value) else value
 
 
+# 【函数 074.06】_smooth_l1_loss_class：复用库的 pointwise MSELoss 框架并将实际损失换成 SmoothL1Loss，保留官方训练器
+# 【输入】
+# 【实现】计算细节见紧接的函数体
+# 【返回】SmoothL1PointwiseLoss
 def _smooth_l1_loss_class():
     """The library's pointwise regression loss with a robust criterion.
 
@@ -156,6 +187,12 @@ def _smooth_l1_loss_class():
     return SmoothL1PointwiseLoss
 
 
+# 【函数 074.09】_stabilize_cross_encoder：对本地CE加载应用已有兼容修正并检查生效
+# 【输入】model
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；通过上下文管理器管理资源；调用 torch.no_grad, inner.parameters,
+# parameter.data.detach().clone, parameter.data.detach, np.asarray, model.predict,
+# np.isfinite(probe).all, np.isfinite
+# 【返回】{'relevant': float(probe[0]), 'irrelevant': float(probe[1])}
 def _stabilize_cross_encoder(model) -> dict[str, float]:
     """Apply the repository's verified local-load fix and fail closed.
 
@@ -184,6 +221,11 @@ def _stabilize_cross_encoder(model) -> dict[str, float]:
     return {"relevant": float(probe[0]), "irrelevant": float(probe[1])}
 
 
+# 【函数 074.10】run：按固定query折构建文本对，使用官方CE训练器与SmoothL1效用监督训练，并保存OOF预测和运行记录
+# 【输入】config_key: str=CONFIG_KEY, output_dir: Path | None=None, limit_folds: int | None=None
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；通过上下文管理器管理资源；调用 time.perf_counter, project_config.load, cfg.get,
+# ValueError, _resolve, str(cfg[key]).lower, Path(output_dir or cfg['output_dir']).resolve, Path
+# 【返回】{'status': 'PROBE', 'folds': fold_rows}；manifest
 def run(config_key: str = CONFIG_KEY, output_dir: Path | None = None,
         limit_folds: int | None = None) -> dict[str, Any]:
     started = time.perf_counter()
@@ -410,6 +452,11 @@ def _prepare(config_key: str) -> dict[str, Any]:
     return cfg
 
 
+# 【函数 074.13】zero_shot：加载未做本任务效用微调的基础 CE，对同一冻结池预测，作为表示与监督对照
+# 【输入】config_key: str, output_dir: Path | None=None
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；通过上下文管理器管理资源；调用 time.perf_counter, _prepare, KeyError, Path(output_dir
+# or cfg['zero_shot_output_dir']).resolve, Path, destination.exists, FileExistsError, _universe
+# 【返回】manifest
 def zero_shot(config_key: str, output_dir: Path | None = None) -> dict[str, Any]:
     """Score the matched Development300 pool with the unfitted base CE.
 
@@ -725,6 +772,11 @@ def closed600_transfer(config_key: str, output_dir: Path | None = None) -> dict[
     return manifest
 
 
+# 【函数 074.16】_tuning_split：以查询为单位构造一次确定性的 CE 配置选择划分
+# 【输入】universe: dict[str, Any], cfg: dict[str, Any]
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 map, np.random.default_rng, rng.permutation, ValueError,
+# AssertionError
+# 【返回】(train, valid, audit)
 def _tuning_split(universe: dict[str, Any], cfg: dict[str, Any]
                   ) -> tuple[list[str], list[str], dict[str, Any]]:
     """One deterministic query-grouped split for configuration selection.
@@ -768,6 +820,13 @@ def _tuning_split(universe: dict[str, Any], cfg: dict[str, Any]
     return train, valid, audit
 
 
+# 【函数 074.17】audit_pool：检查候选池、查询折和标签覆盖的身份一致性
+# 【输入】config_key: str, output_dir: Path | None=None
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 time.perf_counter, _prepare, Path(output_dir or
+# cfg['audit_output_dir']).resolve, Path, destination.exists, FileExistsError, _universe,
+# pq.read_table(_resolve(cfg['reference_pool_parquet'])).to_pylist
+# 【返回】_emit(destination, started, cfg, {'schema': 'stage2-crossencoder-matched-pool-audit-v1',
+# 'status': 'FAILED_GATE' if failed else 'COMPLETE',
 def audit_pool(config_key: str, output_dir: Path | None = None) -> dict[str, Any]:
     """Section 2 and 3 gates: pool identity, fold identity, label coverage."""
     started = time.perf_counter()
@@ -843,6 +902,13 @@ def audit_pool(config_key: str, output_dir: Path | None = None) -> dict[str, Any
     }, tables={"CE_MATCHED_POOL_AUDIT_FOLDS.csv": folds})
 
 
+# 【函数 074.18】audit_tokens：按配置的文本对长度预算统计截断影响，帮助解释256与512的差异
+# 【输入】config_key: str, output_dir: Path | None=None
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 time.perf_counter, _prepare, Path(output_dir or
+# cfg['token_audit_output_dir']).resolve, Path, destination.exists, FileExistsError, _universe,
+# AutoTokenizer.from_pretrained
+# 【返回】_emit(destination, started, cfg, {'schema': 'stage2-crossencoder-token-audit-v1', 'status':
+# 'COMPLETE', 'tokenizer': str(cfg['model']), 'con
 def audit_tokens(config_key: str, output_dir: Path | None = None) -> dict[str, Any]:
     """Section 6 gate: is truncation at the configured max_length material?"""
     started = time.perf_counter()
@@ -891,6 +957,13 @@ def audit_tokens(config_key: str, output_dir: Path | None = None) -> dict[str, A
     }, tables={"CE_TOKEN_LENGTH_AUDIT.csv": rows})
 
 
+# 【函数 074.19】tune：在预定义开发查询holdout中比较有限CE配置，记录选参结果
+# 【输入】config_key: str, output_dir: Path | None=None
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；通过上下文管理器管理资源；调用 time.perf_counter, _prepare, Path(output_dir or
+# tune_cfg['output_dir']).resolve, Path, destination.exists, FileExistsError, _universe,
+# _tuning_split
+# 【返回】_emit(destination, started, cfg, {'schema': 'stage2-crossencoder-tuning-v1', 'status':
+# 'COMPLETE', 'tuning_split': split_audit, 'criterion':
 def tune(config_key: str, output_dir: Path | None = None) -> dict[str, Any]:
     """Sections 6-8: a small, bounded, development-only configuration search."""
     started = time.perf_counter()
@@ -1017,6 +1090,12 @@ def tune(config_key: str, output_dir: Path | None = None) -> dict[str, Any]:
        extra_files={"CE_MATCHED_CONFIG.json": frozen})
 
 
+# 【函数 074.20】_emit：集中写出结果表、补充JSON与manifest，维持结果和身份记录对应
+# 【输入】destination: Path, started: float, cfg: dict[str, Any], body: dict[str, Any], tables:
+# dict[str, list[dict]] | None=None, extra_files: dict[str, Any] | None=None
+# 【实现】遍历或迭代输入；通过上下文管理器管理资源；调用 destination.parent.mkdir, tempfile.TemporaryDirectory, Path, (tables
+# or {}).items, (out / name).open, csv.writer, writer.writerow, writer.writerows
+# 【返回】manifest
 def _emit(destination: Path, started: float, cfg: dict[str, Any],
           body: dict[str, Any], tables: dict[str, list[dict]] | None = None,
           extra_files: dict[str, Any] | None = None) -> dict[str, Any]:

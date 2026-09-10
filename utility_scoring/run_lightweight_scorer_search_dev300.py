@@ -1,4 +1,22 @@
 #!/usr/bin/env python3
+# 【文件 072】固定七维表示、池与分区，嵌套搜索各轻量家族并产生可比较的 OOF 预测
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring
+# 【主要函数】_mean_within_query_spearman, _mean_utility_at8, _load_universe, _audit, _tune_family, run,
+# main
+# 【配置】configuration/params.yaml → lightweight_scorer_search_dev300_rawtext
+# 【输入输出】output_dir=out/lightweight_scorer_search_dev300_rawtext_v1
+# 【输入输出】journal_dir=out/lightweight_scorer_search_dev300_rawtext_v1_journal
+# 【输入输出】features_parquet=out/stage2_redesign_features_rrf2pool_rawtext_v1/stage2_features_rrf2pool.parquet
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evidence_selection/__init__.py
+# 【依赖文件】evidence_selection/run_selection_action_space_repair.py
+# 【依赖文件】utility_scoring/__init__.py
+# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
+# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【依赖文件】utility_scoring/run_rq2b_scorer_family_oof_dev300.py
+# 【依赖文件】utility_scoring/stage2_training_contract.py
+
 """Expanded, fairly tuned lightweight scorer search on the frozen clean 7D contract.
 
 Answers one question: given the frozen compact representation, how much extra
@@ -85,6 +103,10 @@ def _spearman(predicted, actual) -> float | None:
     return None if np.isnan(value) else value
 
 
+# 【函数 072.03】_mean_within_query_spearman：在每个查询内比较预测与真实效用的秩相关，再聚合可计算的查询
+# 【输入】predictions, qids, candidate_ids, registry
+# 【实现】遍历或迭代输入；调用 map, _spearman, values.append, statistics.fmean
+# 【返回】statistics.fmean(values) if values else 0.0
 def _mean_within_query_spearman(predictions, qids, candidate_ids, registry) -> float:
     values = []
     for qid in qids:
@@ -96,6 +118,10 @@ def _mean_within_query_spearman(predictions, qids, candidate_ids, registry) -> f
     return statistics.fmean(values) if values else 0.0
 
 
+# 【函数 072.04】_mean_utility_at8：每查询按预测取Top8，再从registry读取真实效用并求查询平均，用作共同选择指标
+# 【输入】predictions, qids, candidate_ids, registry, k: int=8
+# 【实现】遍历或迭代输入；调用 map, values.append, repair.utility_at8, statistics.fmean
+# 【返回】statistics.fmean(values)
 def _mean_utility_at8(predictions, qids, candidate_ids, registry, k: int = 8) -> float:
     """The realised set-level metric, on whatever query subset is passed.
 
@@ -111,6 +137,13 @@ def _mean_utility_at8(predictions, qids, candidate_ids, registry, k: int = 8) ->
     return statistics.fmean(values)
 
 
+# 【函数 072.05】_load_universe：读取RRF2特征表及冻结查询分区，以ID连接utility，按主七维契约组织模型共享输入
+# 【输入】cfg: dict[str, Any]
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 map, pq.read_table(cfg['features_parquet']).to_pylist,
+# pq.read_table, defaultdict, pool[qid].append, project_config.load, cfg.get,
+# load_direct_training_contract
+# 【返回】{'static': static, 'pool': dict(pool), 'contract': contract, 'registry':
+# contract['registry'], 'splits': contract['splits'], 'feature_names'
 def _load_universe(cfg: dict[str, Any]) -> dict[str, Any]:
     names = list(map(str, cfg["feature_names"]))
     rows = pq.read_table(cfg["features_parquet"]).to_pylist()
@@ -133,6 +166,11 @@ def _load_universe(cfg: dict[str, Any]) -> dict[str, Any]:
             "feature_names": names, "rows": len(rows)}
 
 
+# 【函数 072.06】_audit：检查300查询、15000对、每查询50候选、标签完整、身份一致、训练验证无重叠及每查询5次OOF覆盖
+# 【输入】cfg: dict[str, Any], universe: dict[str, Any]
+# 【实现】遍历或迭代输入；调用 pq.read_table(_resolve(cfg['reference_pool_parquet'])).to_pylist, pq.read_table,
+# _resolve, pool.values, map, folds.append
+# 【返回】{'gates': gates, 'folds': folds, 'failed_gates': failed}
 def _audit(cfg: dict[str, Any], universe: dict[str, Any]) -> dict[str, Any]:
     pool, static = universe["pool"], universe["static"]
     keys = set(static)
@@ -190,6 +228,12 @@ def _audit(cfg: dict[str, Any], universe: dict[str, Any]) -> dict[str, Any]:
     return {"gates": gates, "folds": folds, "failed_gates": failed}
 
 
+# 【函数 072.07】_tune_family：逐配置、逐内层查询折拟合并预测
+# 【输入】spec, universe, train_qids, inner_splits, seed
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 fitter, family._predict_pairs, predictions.update, scores.append,
+# family._inner_score, traces.append, statistics.fmean, AssertionError
+# 【返回】{'selected_config_index': best['config_index'], 'selected_setting': best['setting'],
+# 'inner_criterion': 'inner_query_mean_ndcg_at8' if kind
 def _tune_family(spec, universe, train_qids, inner_splits, seed):
     """Inner-fold search for one family, returning its selected configuration
     together with the inner out-of-fold predictions that configuration makes.
@@ -237,6 +281,12 @@ def _tune_family(spec, universe, train_qids, inner_splits, seed):
     }
 
 
+# 【函数 072.08】run：执行数据审计后，在25外层折内搜索各family，再以inner Utility@8选nested-best
+# 【输入】config_key: str=CONFIG_KEY, output_dir: Path | None=None, limit_folds: int | None=None
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；通过上下文管理器管理资源；调用 time.perf_counter, project_config.load, cfg.get,
+# ValueError, _resolve, str(cfg[key]).lower, Path(output_dir or cfg['output_dir']).resolve, Path
+# 【返回】{'status': 'PROBE', 'folds': fold_choice_rows, 'elapsed_seconds': round(time.perf_counter()
+# - started, 2)}；manifest
 def run(config_key: str = CONFIG_KEY, output_dir: Path | None = None,
         limit_folds: int | None = None) -> dict[str, Any]:
     started = time.perf_counter()
@@ -449,6 +499,9 @@ def run(config_key: str = CONFIG_KEY, output_dir: Path | None = None,
     return manifest
 
 
+# 【函数 072.09】main：解析命令行的配置键、输出路径与折数限制，再调用run
+# 【输入】
+# 【实现】遍历或迭代输入；调用 argparse.ArgumentParser, parser.add_argument, parser.parse_args, run, json.dumps
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config-key", default=CONFIG_KEY)

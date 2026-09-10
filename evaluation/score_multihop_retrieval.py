@@ -1,3 +1,12 @@
+# 【文件 099】把检索排名与参考身份连接，计算检索层指标
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】score_system, paired_bootstrap_delta, per_query_joint, per_query_ir_metric, main
+# 【输入接口】path 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】evaluation/ir_metrics.py
+# 【调用方】evaluation/pooled_route_utility.py
+# 【调用方】evaluation/run_closed600_e5_lopo_preflight.py
+# 【调用方】evaluation/same_post_shortcut_audit.py
+
 """Score one or more retrieval outputs (HippoRAG or dense baseline) against
 MuSiQue gold supporting titles, using the canonical evaluation.ir_metrics.
 

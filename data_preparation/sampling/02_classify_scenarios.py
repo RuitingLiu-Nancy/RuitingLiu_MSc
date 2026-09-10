@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# 【文件 011】给候选帖子判定场景标签，为深度与场景联合分层提供依据
+# 【流程位置】数据准备与分区；所属包：data_preparation/sampling
+# 【主要函数】toks, primary_scenario, TfidfEmbed, BertEmbed, load_reference, load_candidates, run, main
+
 """Few-shot scenario classification of deep-hub candidates (no training, no new
 labels). Uses the 2338 already-annotated posts as a reference set and assigns
 each candidate a primary scenario by embedding nearest-neighbour.

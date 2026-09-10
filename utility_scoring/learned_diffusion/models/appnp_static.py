@@ -1,3 +1,10 @@
+# 【文件 066】实现离散个性化传播
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring/learned_diffusion/models
+# 【主要函数】row_normalized_weights, personalized_power_iteration, seed_to_candidate_kernel,
+# StaticAPPNP
+# 【输入接口】candidate 等函数参数；返回值及写出操作见对应函数
+# 【调用方】utility_scoring/learned_diffusion/models/seed_scorer.py
+
 """Discrete personalized propagation adapted from PPNP/APPNP.
 
 Klicpera et al.'s power iteration is retained, but local transition

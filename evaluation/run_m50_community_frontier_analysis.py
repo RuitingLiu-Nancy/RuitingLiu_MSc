@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+# 【文件 095】给冻结 M<=50 OOF 证据集补 BGE-M3 社区对应前沿
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】final_ids, alignment_for_ids, aggregate, encode_with_verified_prior_cache, main
+# 【输入接口】rows, output, config 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/run_m50_dense_frontier_analysis.py
+# 【依赖文件】evaluation/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/statistics.py
+# 【依赖文件】utility_scoring/annotation/run_top3_residual_judging.py
+# 【调用方】evaluation/run_evidence_signal_triangulation.py
+# 【调用方】evaluation/run_stage2_community_dev300_complete.py
+
 """Post-hoc BGE-M3 community correspondence for frozen M<=50 OOF sets."""
 from __future__ import annotations
 

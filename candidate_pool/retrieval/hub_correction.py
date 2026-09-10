@@ -1,3 +1,9 @@
+# 【文件 030】计算只读的度数惩罚，供查询时临时图转移权重使用
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】symmetric_degree_penalty, high_degree_mask
+# 【输入接口】source 等函数参数；返回值及写出操作见对应函数
+# 【调用方】candidate_pool/retrieval/official_graph_adapter.py
+
 """Read-only hub penalties for Official HippoRAG2 transition profiles.
 
 The official graph is undirected, so a target-only degree penalty cannot be

@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# 【文件 009】把冻结查询及语料转换为官方 HippoRAG 可读的数据适配格式
+# 【流程位置】数据准备与分区；所属包：data_preparation
+# 【主要函数】export, main
+
 """Export the frozen validation corpus/query adapter for official HippoRAG.
 
 The adapter performs no retrieval and no LLM calls.  It serializes the same

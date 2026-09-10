@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# 【文件 015】按配置冻结图构建与评价分区，写出身份清单和计数
+# 【流程位置】数据准备与分区；所属包：data_preparation/sampling
+# 【主要函数】resolve, sha256, load_config, read_ids, id_set_sha256, verify_locked_artifact,
+# verify_invariants, verify
+# 【输入接口】path, query, cfg, config, output, rows 等函数参数；返回值及写出操作见对应函数
+
 """Top-level, configuration-driven freeze for graph and evaluation partitions.
 
 This tool does not invent a new sampler.  It orchestrates and audits the

@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 【文件 006】把抽取关系两端链接到全局规范实体，生成可构图的关系记录
+# 【流程位置】数据准备与分区；所属包：data_preparation/entity_processing
+# 【主要函数】load_mention_map, load_relations, main
+# 【输入接口】path 等函数参数；返回值及写出操作见对应函数
+
 """GLOBAL relation grounding — the "resolve/fusion" stage of an
 extract-then-resolve KG construction pipeline.
 

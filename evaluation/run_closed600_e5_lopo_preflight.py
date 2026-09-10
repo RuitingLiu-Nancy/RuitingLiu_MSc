@@ -1,4 +1,19 @@
 #!/usr/bin/env python3
+# 【文件 093】对 Closed600 的 E5 检索和排除同帖设置做准备及判分覆盖检查
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】load_closed600_e5_lopo_config, structural_profile, candidate_union,
+# paired_raw_lopo_candidate_union, describe_candidate_scope, describe_candidate_scope_by_sources,
+# run, main
+# 【配置】configuration/params.yaml → closed600_e5_lopo_preflight
+# 【输入接口】path, query, source, rows, cfg 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】data_preparation/sampling/create_mixed_query_splits.py
+# 【依赖文件】data_preparation/sampling/sample_human_annotation_candidates.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/same_post_shortcut_audit.py
+# 【依赖文件】evaluation/score_multihop_retrieval.py
+# 【依赖文件】fusion/run_depth_graph_utility_community_frontier.py
+# 【依赖文件】shared/io_utils.py
+
 """Add the frozen E5 Dense backend to closed600 and audit LOPO judging cost.
 
 This is a local-only, label-blind retrieval/preflight runner.  It reuses the

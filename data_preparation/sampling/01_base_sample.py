@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 【文件 010】按最低数据资格条件抽取基础样本，为后续分层提供母集
+# 【流程位置】数据准备与分区；所属包：data_preparation/sampling
+# 【主要函数】stream_zst, year_of, load_exclude, run, main
+# 【输入接口】path 等函数参数；返回值及写出操作见对应函数
+
 """STEP 1 of the data-driven pipeline: a BASE sample using ONLY minimal,
 annotation-free filters. No scenario, no clustering, no embeddings, no priors.
 

@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 【文件 020】以共现和近邻边增密实体图，再进行 Leiden 社区划分
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/graph_construction
+# 【主要函数】load_edges, build_dense_graph, normalize_edges, load_dense_edge_graph, run_leiden, main
+# 【输入接口】path 等函数参数；返回值及写出操作见对应函数
+
 """Graph densification + Leiden community detection (schema-free layer).
 
 Follows the standard GraphRAG multi-edge recipe (Edge et al. 2024; KG-RAG

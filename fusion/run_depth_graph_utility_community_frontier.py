@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+# 【文件 050】组织后端与深度前沿的身份检查、盲构池、判分覆盖及分析
+# 【流程位置】候选池构造与排名融合；所属包：fusion
+# 【主要函数】utc_now, sha256, sha256_text, read_jsonl, write_json, write_jsonl, write_csv,
+# reject_test_path
+# 【配置】configuration/params.yaml → depth_graph_utility_community_frontier
+# 【输入接口】path, rows, config, cfg, query, output, registry, candidate, source 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/analyze_strict_sbert_graph_oracle.py
+# 【依赖文件】evaluation/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】utility_scoring/annotation/run_coverage_complete_residual_judging.py
+# 【调用方】evaluation/run_closed600_e5_lopo_preflight.py
+# 【调用方】evaluation/run_evidence_signal_triangulation.py
+
 """Cross-backend candidate-depth frontier preflight and gated analysis entry.
 
 The current experiment configuration deliberately has both external gates

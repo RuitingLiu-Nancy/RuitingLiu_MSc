@@ -1,3 +1,11 @@
+# 【文件 025】提供路径感知图检索的公共基础类和评论元信息映射
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】split_labels, clean_label, label_tokens, norm_dict, PathAwareRetriever
+# 【输入接口】query, path 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/backends.py
+# 【调用方】candidate_pool/retrieval/multihop.py
+# 【调用方】evaluation/two_graph_compare.py
+
 """Base graph retriever (slimmed from path_aware_retrieve.py).
 
 KEPT: PathAwareRetriever (retrieve/retrieve_rrf/_comment_meta/...), norm_dict,

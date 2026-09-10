@@ -1,4 +1,28 @@
 #!/usr/bin/env python3
+# 【文件 078】实现精确受限选择、公共候选训练和 OOF 分析
+# 【流程位置】固定数量的证据选择；所属包：evidence_selection
+# 【主要函数】read_jsonl, write_json, write_csv, sha256, object_sha256, utc_now, stable_unique,
+# utility_at8
+# 【配置】configuration/params.yaml → selection_action_space_repair_dev300_rrf3_rawtext
+# 【输入输出】output_dir=experiments/selection_action_space_repair_dev300_rrf3_rawtext_unused
+# 【输入输出】utility_registry=out/development300_m50_utility_judging_openrouter_coreweave_v1/complete/utility_registry_coverage_complete.jsonl
+# 【输入输出】queries=out/development300_analysis_inputs_v1/development300_queries_normalized.json
+# 【输入输出】corpus=out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+# 【依赖文件】candidate_pool/analyze_strict_sbert_graph_oracle.py
+# 【依赖文件】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【依赖文件】candidate_pool/run_m50_dense_frontier_analysis.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
+# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【调用方】utility_scoring/build_stage2_redesign_features.py
+# 【调用方】utility_scoring/run_lightweight_scorer_search_dev300.py
+# 【调用方】utility_scoring/run_rq2b_scorer_family_oof_dev300.py
+# 【调用方】evidence_selection/run_set_aware_selection_ablation.py
+# 【调用方】evaluation/analyze_rq2b_set_correspondence.py
+# 【调用方】evaluation/confirmatory_test200_rq2b.py
+
 """Matched development-only repair of the evidence-selection action space.
 
 The experiment separates three quantities that the historical one-swap
@@ -135,6 +159,10 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+# 【函数 078.07】stable_unique：在保留首次出现顺序的同时去掉重复ID，为候选池和最终集合提供确定性身份
+# 【输入】values: Iterable[str]
+# 【实现】遍历或迭代输入；调用 map, seen.add, output.append
+# 【返回】output
 def stable_unique(values: Iterable[str]) -> list[str]:
     seen: set[str] = set()
     output: list[str] = []
@@ -145,12 +173,21 @@ def stable_unique(values: Iterable[str]) -> list[str]:
     return output
 
 
+# 【函数 078.08】utility_at8：要求8个不同证据 ID，并取这8条真实效用的均值
+# 【输入】ids: list[str], query_id: str, registry: dict
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 ValueError, statistics.fmean
+# 【返回】statistics.fmean((float(registry[query_id, cid]['utility']) for cid in ids))
 def utility_at8(ids: list[str], query_id: str, registry: dict) -> float:
     if len(ids) != 8 or len(set(ids)) != 8:
         raise ValueError(f"{query_id}: evidence set must contain eight unique items")
     return statistics.fmean(float(registry[(query_id, cid)]["utility"]) for cid in ids)
 
 
+# 【函数 078.09】exact_select_under_budget：枚举实际替换数 t=0..min(r,K,可用新项数)，比较最好的 K-t 个锚点与 t 个新项的总分
+# 【输入】d8_ids: list[str], pool_ids: list[str], scores: dict[str, float], replacement_budget: int,
+# *, k: int=8
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 stable_unique, ValueError, KeyError, abs
+# 【返回】best
 def exact_select_under_budget(
     d8_ids: list[str],
     pool_ids: list[str],
@@ -245,6 +282,12 @@ class CandidateLambdaMART:
         return np.asarray(self.model.predict(values), dtype=np.float64)
 
 
+# 【函数 078.19】_candidate_arrays：以 (query_id, comment_id) 对齐指定列、连续效用和查询平衡权重
+# 【输入】qids: list[str], candidate_ids: dict[str, list[str]], static: dict[tuple[str, str],
+# dict[str, float]], registry: dict[tuple[str, str], dict], feature_names: tuple[str, ...] |
+# list[str] | None=None
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 np.asarray, Counter, math.isclose, weights.sum, AssertionError
+# 【返回】(pairs, matrix, target, weights)
 def _candidate_arrays(
     qids: list[str],
     candidate_ids: dict[str, list[str]],
@@ -279,6 +322,12 @@ def _candidate_arrays(
     return pairs, matrix, target, weights
 
 
+# 【函数 078.20】_fit_huber：仅在训练候选上拟合 StandardScaler
+# 【输入】qids: list[str], candidate_ids: dict[str, list[str]], static: dict, registry: dict, setting:
+# dict, feature_names=None
+# 【实现】调用 _candidate_arrays, StandardScaler().fit, StandardScaler, HuberRegressor, model.fit,
+# scaler.transform, CandidateHuber
+# 【返回】CandidateHuber(scaler, model)
 def _fit_huber(
     qids: list[str], candidate_ids: dict[str, list[str]], static: dict,
     registry: dict, setting: dict, feature_names=None,
@@ -297,6 +346,12 @@ def _fit_huber(
     return CandidateHuber(scaler, model)
 
 
+# 【函数 078.21】_fit_mlp：训练折标准化七维（或调用者注册的）特征
+# 【输入】qids: list[str], candidate_ids: dict[str, list[str]], static: dict, registry: dict, setting:
+# dict, seed: int, feature_names=None
+# 【实现】遍历或迭代输入；调用 random.seed, np.random.seed, torch.manual_seed, _candidate_arrays,
+# StandardScaler().fit, StandardScaler, torch.tensor, scaler.transform(matrix).astype
+# 【返回】CandidateMLP(scaler, model)
 def _fit_mlp(
     qids: list[str], candidate_ids: dict[str, list[str]], static: dict,
     registry: dict, setting: dict, seed: int, feature_names=None,
@@ -360,6 +415,11 @@ def _fit_lambdamart(
     return CandidateLambdaMART(scaler, model)
 
 
+# 【函数 078.23】_predict_pairs：为给定查询和候选构造注册特征矩阵，调用已拟合模型，按(query_id,comment_id)返回分数
+# 【输入】model: CandidateHuber | CandidateMLP | CandidateLambdaMART, qids: list[str], candidate_ids:
+# dict[str, list[str]], static: dict
+# 【实现】遍历或迭代输入；调用 np.asarray, model.predict, map
+# 【返回】dict(zip(pairs, map(float, values), strict=True))
 def _predict_pairs(
     model: CandidateHuber | CandidateMLP | CandidateLambdaMART,
     qids: list[str],
@@ -378,6 +438,12 @@ def _predict_pairs(
     return dict(zip(pairs, map(float, values), strict=True))
 
 
+# 【函数 078.24】_query_mean_mae：先在每个查询内计算候选效用绝对误差，再对查询均值汇总
+# 【输入】predictions: dict[tuple[str, str], float], qids: list[str], candidate_ids: dict[str,
+# list[str]], registry: dict
+# 【实现】遍历或迭代输入；调用 statistics.fmean, abs
+# 【返回】statistics.fmean((statistics.fmean((abs(float(predictions[qid, cid]) - float(registry[qid,
+# cid]['utility'])) for cid in candidate_ids[qid]))
 def _query_mean_mae(
     predictions: dict[tuple[str, str], float],
     qids: list[str],
@@ -396,6 +462,12 @@ def _query_mean_mae(
     )
 
 
+# 【函数 078.25】_query_mean_ndcg_at8：按查询评价预测排名的nDCG@8，再汇总查询均值，用于排序家族内选参
+# 【输入】predictions: dict[tuple[str, str], float], qids: list[str], candidate_ids: dict[str,
+# list[str]], registry: dict
+# 【实现】遍历或迭代输入；调用 map, canonical.historical_utility_grade, values.append, graded_ndcg_at,
+# statistics.fmean
+# 【返回】statistics.fmean(values)
 def _query_mean_ndcg_at8(
     predictions: dict[tuple[str, str], float],
     qids: list[str],
@@ -936,6 +1008,11 @@ def _scorer_settings(paths: dict) -> dict[str, list[dict]]:
     }
 
 
+# 【函数 078.31】_run_oof_predictions：按冻结查询分区训练和预测，将重复留出预测按query–candidate对聚合，为后续不同选择器复用
+# 【输入】contract: dict, pools: dict
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 _scorer_settings, defaultdict, torch.set_num_threads, map,
+# canonical.inner_folds, _tune_and_fit, _predict_pairs, predictions.items
+# 【返回】(prediction_rows, aggregate, tuning_audit)
 def _run_oof_predictions(contract: dict, pools: dict) -> tuple[list[dict], dict, list[dict]]:
     paths = contract["paths"]
     settings = _scorer_settings(paths)
@@ -1168,6 +1245,12 @@ def _source_membership(
     }
 
 
+# 【函数 078.34】_replacement_diagnostics：比较选中集合与原Dense8，记录实际新入、保留、退出条目
+# 【输入】*, selected_ids: list[str], baseline_ids: list[str], predicted_scores: dict[str, float],
+# query_id: str, backend: str, depth: int, contract: dict
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 AssertionError, _source_membership, pair_rows.append, json.dumps
+# 【返回】{'replacement_count': len(entrants), 'deeper_dense_entrant_count': dense_count,
+# 'graph_added_entrant_count': graph_count, 'dense_tail_also_g
 def _replacement_diagnostics(
     *, selected_ids: list[str], baseline_ids: list[str], predicted_scores: dict[str, float],
     query_id: str, backend: str, depth: int, contract: dict,
@@ -1226,6 +1309,11 @@ def _replacement_diagnostics(
     }
 
 
+# 【函数 078.35】_build_oracles：在已判分的固定候选范围内，用真实utility计算访问及受限动作空间上限
+# 【输入】contract: dict, pools: dict
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 map, ValueError, utility_at8, exact_select_under_budget,
+# _replacement_diagnostics, abs, AssertionError, rows.append
+# 【返回】(rows, lookup, selected_rows)
 def _build_oracles(contract: dict, pools: dict) -> tuple[list[dict], dict, list[dict]]:
     paths = contract["paths"]
     qids = contract["qids"]
@@ -1343,6 +1431,11 @@ def _build_oracles(contract: dict, pools: dict) -> tuple[list[dict], dict, list[
     return rows, lookup, selected_rows
 
 
+# 【函数 078.36】_build_learned_selections：把冻结OOF预测交给选择规则，构造可实现的证据集合，再连接真实标签评价
+# 【输入】contract: dict, pools: dict, predictions: dict, oracle: dict
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 utility_at8, map, rows.append, selected_rows.append,
+# exact_select_under_budget, _replacement_diagnostics, math.isclose, AssertionError
+# 【返回】(rows, selected_rows)
 def _build_learned_selections(
     contract: dict, pools: dict, predictions: dict, oracle: dict,
 ) -> tuple[list[dict], list[dict]]:

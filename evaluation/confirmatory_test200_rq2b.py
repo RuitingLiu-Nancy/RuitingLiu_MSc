@@ -1,3 +1,16 @@
+# 【文件 085】LambdaMART Test200 确认的被调用实现
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】resolve_config, freeze_final_model, verify_contract_rq2b, prepare_local_rq2b,
+# analyze_test_rq2b
+# 【输入接口】path, rows, scores, cfg, source, query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/analyze_strict_sbert_graph_oracle.py
+# 【依赖文件】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【依赖文件】candidate_pool/run_m50_dense_frontier_analysis.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evidence_selection/run_selection_action_space_repair.py
+# 【依赖文件】fusion/ranking.py
+
 """RQ2b Test200 implementation used by the canonical confirmatory runner.
 
 This module deliberately has no CLI.  ``run_confirmatory_test200.py`` remains

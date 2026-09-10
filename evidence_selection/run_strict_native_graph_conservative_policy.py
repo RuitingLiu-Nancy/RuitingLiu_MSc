@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+# 【文件 080】在严格原生图池上评价保守单条替换策略
+# 【流程位置】固定数量的证据选择；所属包：evidence_selection
+# 【主要函数】_minmax, run, main
+# 【输入接口】query, path, rows, scores, candidate, input, config 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/analyze_strict_sbert_graph_oracle.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/fusion_strategy_ablation.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/statistics.py
+# 【依赖文件】evidence_selection/run_strict_sbert_mixed_selector.py
+# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
+# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【调用方】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+
 """Nested-OOF conservative one-swap policies for strict native Graph candidates.
 
 This is a development-only, full-information one-step contextual policy
@@ -174,6 +188,10 @@ def _mean_and_se(values: list[float]) -> tuple[float, float]:
     return mean, statistics.stdev(values) / math.sqrt(len(values))
 
 
+# 【函数 080.03】_minmax：按当前查询这一组数值的最小值和最大值缩放
+# 【输入】values: Iterable[float]
+# 【实现】遍历或迭代输入；计算细节见紧接的函数体
+# 【返回】[]；[0.0 for _ in values]
 def _minmax(values: Iterable[float]) -> list[float]:
     values = [float(value) for value in values]
     if not values:

@@ -1,4 +1,23 @@
 #!/usr/bin/env python3
+# 【文件 042】审计 Dense8 错配及单条替换救援
+# 【流程位置】候选访问与图检索；所属包：candidate_pool
+# 【主要函数】run, main
+# 【输入接口】path, rows, query, candidate, cfg, matrix, registry, config 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/analyze_strict_sbert_graph_oracle.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/safety_filter.py
+# 【依赖文件】evaluation/statistics.py
+# 【依赖文件】evidence_selection/run_strict_native_graph_conservative_policy.py
+# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
+# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【调用方】candidate_pool/run_m50_dense_frontier_analysis.py
+# 【调用方】candidate_pool/run_m50_graph_frontier_analysis.py
+# 【调用方】utility_scoring/build_stage2_redesign_features.py
+# 【调用方】evidence_selection/run_selection_action_space_repair.py
+# 【调用方】evidence_selection/run_set_aware_selection_ablation.py
+# 【调用方】evaluation/confirmatory_test200_rq2b.py
+
 """Audit Dense Top-8 mismatch and matched one-swap rescue routes.
 
 The audit is development-only and deliberately fail-closed:

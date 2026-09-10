@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+# 【文件 073】通过 FITTERS 注册表实现回归与排序模型训练，以及统一按查询验证
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring
+# 【主要函数】GBDTRegression, XGBRankerArm, LGBMRankerArm, MLPRankNet, RankSVMArm, CatBoostArm,
+# MLPListNet, LogisticUseful
+# 【配置】configuration/params.yaml → rq2b_scorer_family_dev300
+# 【输入接口】matrix, candidate, registry, config, path, rows, output 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evidence_selection/__init__.py
+# 【依赖文件】evidence_selection/run_selection_action_space_repair.py
+# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
+# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【调用方】utility_scoring/run_lightweight_scorer_search_dev300.py
+
 """Out-of-fold scores for the Stage-2 scorer family, under the frozen contract.
 
 Stage 2 currently carries three scorers and the residual prior helps exactly
@@ -193,6 +207,11 @@ class CalibratedRanker:
         return np.clip(self.isotonic.predict(normalised), UTILITY_LOW, UTILITY_HIGH)
 
 
+# 【函数 073.22】_normalise_within_group：逐查询做min-max缩放
+# 【输入】values: np.ndarray, groups: list[str]
+# 【实现】遍历或迭代输入；调用 np.empty_like, defaultdict, index[group].append, index.values, block.min,
+# block.max
+# 【返回】out
 def _normalise_within_group(values: np.ndarray, groups: list[str]) -> np.ndarray:
     out = np.empty_like(values)
     index: dict[str, list[int]] = defaultdict(list)
@@ -206,6 +225,12 @@ def _normalise_within_group(values: np.ndarray, groups: list[str]) -> np.ndarray
     return out
 
 
+# 【函数 073.23】_graded_labels：将连续效用裁到合法区间，再按label_scale量化为整数等级
+# 【输入】target: np.ndarray, scale: float=1.0
+# 【实现】调用 np.clip, (np.rint(clipped) - UTILITY_LOW).astype, np.rint, np.rint((clipped -
+# UTILITY_LOW) * float(scale)).astype
+# 【返回】(np.rint(clipped) - UTILITY_LOW).astype(np.int32)；np.rint((clipped - UTILITY_LOW) *
+# float(scale)).astype(np.int32)
 def _graded_labels(target: np.ndarray, scale: float = 1.0) -> np.ndarray:
     """Quantise continuous utility into the integer grades a grouped ranker takes.
 
@@ -222,6 +247,10 @@ def _graded_labels(target: np.ndarray, scale: float = 1.0) -> np.ndarray:
     return np.rint((clipped - UTILITY_LOW) * float(scale)).astype(np.int32)
 
 
+# 【函数 073.24】_group_codes：按首次出现顺序编码查询组，并检查同查询候选是否组成连续块
+# 【输入】ordered: list[str]
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 codes.append, ValueError, np.asarray
+# 【返回】np.asarray(codes, dtype=np.int32)
 def _group_codes(ordered: list[str]) -> np.ndarray:
     seen: dict[str, int] = {}
     codes = []
@@ -234,6 +263,10 @@ def _group_codes(ordered: list[str]) -> np.ndarray:
     return np.asarray(codes, dtype=np.int32)
 
 
+# 【函数 073.25】_group_sizes：统计每个连续查询块的行数，供LightGBM的group参数使用
+# 【输入】ordered: list[str]
+# 【实现】遍历或迭代输入；调用 sizes.append
+# 【返回】sizes
 def _group_sizes(ordered: list[str]) -> list[int]:
     sizes: list[int] = []
     for position, qid in enumerate(ordered):
@@ -296,6 +329,10 @@ def _ranknet_pairs(blocks, utilities, setting, seed):
     return left, right, weights
 
 
+# 【函数 073.28】_unit_mean_weights：将样本权重重新缩放至均值1，保留相对查询权重并维持树分裂约束的有效尺度
+# 【输入】weights: np.ndarray
+# 【实现】对不满足条件的输入抛出异常；调用 np.asarray, values.mean, AssertionError, math.isclose, scaled.mean
+# 【返回】scaled
 def _unit_mean_weights(weights: np.ndarray) -> np.ndarray:
     """Put query-balanced weights on the scale a learner's penalties assume.
 
@@ -329,6 +366,11 @@ def _unit_mean_weights(weights: np.ndarray) -> np.ndarray:
     return scaled
 
 
+# 【函数 073.29】_fit_gbdt_regression：将训练样本权重调整为单位均值，再用配置指定的 XGBRegressor 目标训练
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】遍历或迭代输入；调用 repair._candidate_arrays, StandardScaler().fit, StandardScaler, setting.items,
+# xgboost.XGBRegressor, model.fit, scaler.transform(matrix).astype, scaler.transform
+# 【返回】GBDTRegression(scaler, model)
 def _fit_gbdt_regression(qids, candidate_ids, static, registry, setting, seed, feature_names=None):
     import xgboost
 
@@ -348,6 +390,11 @@ def _fit_gbdt_regression(qids, candidate_ids, static, registry, setting, seed, f
     return GBDTRegression(scaler, model)
 
 
+# 【函数 073.30】_fit_xgb_ranker：按查询组成连续组，转换相关性等级，交给配置指定的 XGBRanker 排序目标
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】遍历或迭代输入；调用 repair._candidate_arrays, StandardScaler().fit, StandardScaler, setting.get,
+# setting.items, xgboost.XGBRanker, model.fit, scaler.transform(matrix).astype
+# 【返回】XGBRankerArm(scaler, model)
 def _fit_xgb_ranker(qids, candidate_ids, static, registry, setting, seed,
                     feature_names=None):
     import xgboost
@@ -372,6 +419,11 @@ def _fit_xgb_ranker(qids, candidate_ids, static, registry, setting, seed,
     return XGBRankerArm(scaler, model)
 
 
+# 【函数 073.31】_fit_lgbm_ranker：按查询组装候选和等级，提供 group 大小给 LGBMRanker
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】遍历或迭代输入；调用 repair._candidate_arrays, StandardScaler().fit, StandardScaler, setting.get,
+# setting.items, lightgbm.LGBMRanker, model.fit, scaler.transform(matrix).astype
+# 【返回】LGBMRankerArm(scaler, model)
 def _fit_lgbm_ranker(qids, candidate_ids, static, registry, setting, seed, feature_names=None):
     import lightgbm
 
@@ -396,6 +448,11 @@ def _fit_lgbm_ranker(qids, candidate_ids, static, registry, setting, seed, featu
     return LGBMRankerArm(scaler, model)
 
 
+# 【函数 073.32】_fit_mlp_ranknet：复用 SmallMLP
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】遍历或迭代输入；调用 random.seed, np.random.seed, torch.manual_seed, repair._candidate_arrays,
+# StandardScaler().fit, StandardScaler, torch.tensor, scaler.transform(matrix).astype
+# 【返回】MLPRankNet(scaler, model)
 def _fit_mlp_ranknet(qids, candidate_ids, static, registry, setting, seed,
                      feature_names=None):
     """The frozen pointwise MLP arm with its loss replaced by RankNet.
@@ -495,6 +552,11 @@ def _fit_ranksvm(qids, candidate_ids, static, registry, setting, seed, feature_n
     return RankSVMArm(scaler, model)
 
 
+# 【函数 073.35】_fit_catboost_ranker：按 query_id 排序确保组连续，将连续效用与 group_id 交给 CatBoostRanker
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】遍历或迭代输入；调用 repair._candidate_arrays, StandardScaler().fit, StandardScaler, setting.items,
+# catboost.CatBoostRanker, model.fit, scaler.transform(matrix).astype, scaler.transform
+# 【返回】CatBoostArm(scaler, model)
 def _fit_catboost_ranker(qids, candidate_ids, static, registry, setting, seed, feature_names=None):
     """CatBoostRanker under whichever grouped loss the grid names.
 
@@ -623,6 +685,10 @@ def _fit_logistic_useful(qids, candidate_ids, static, registry, setting, seed, f
     return LogisticUseful(scaler, model)
 
 
+# 【函数 073.39】_fit_principal_huber：转调共用 Huber fitter
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】调用 repair._fit_huber
+# 【返回】repair._fit_huber(qids, candidate_ids, static, registry, setting, feature_names)
 def _fit_principal_huber(qids, candidate_ids, static, registry, setting, seed,
                          feature_names=None):
     """Canonical frozen Huber (repair implementation); the fit is deterministic
@@ -631,6 +697,10 @@ def _fit_principal_huber(qids, candidate_ids, static, registry, setting, seed,
                              feature_names)
 
 
+# 【函数 073.40】_fit_principal_mlp：转调主 pointwise MLP fitter
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】调用 repair._fit_mlp
+# 【返回】repair._fit_mlp(qids, candidate_ids, static, registry, setting, seed, feature_names)
 def _fit_principal_mlp(qids, candidate_ids, static, registry, setting, seed, feature_names=None):
     return repair._fit_mlp(qids, candidate_ids, static, registry, setting, seed,
                            feature_names)
@@ -642,6 +712,11 @@ def _fit_principal_mlp(qids, candidate_ids, static, registry, setting, seed, fea
 # pipeline, same query-balanced weights, and a wrapper with the same predict
 # interface, so the canonical tuner and OOF loop need no special cases.
 
+# 【函数 073.41】_fit_ridge：训练折拟合缩放器，再以 L2 正则的连续效用平方损失训练 Ridge
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】调用 repair._candidate_arrays, StandardScaler().fit, StandardScaler, Ridge, model.fit,
+# scaler.transform, repair.CandidateHuber
+# 【返回】repair.CandidateHuber(scaler, model)
 def _fit_ridge(qids, candidate_ids, static, registry, setting, seed,
                feature_names=None):
     from sklearn.linear_model import Ridge
@@ -656,6 +731,11 @@ def _fit_ridge(qids, candidate_ids, static, registry, setting, seed,
     return repair.CandidateHuber(scaler, model)
 
 
+# 【函数 073.42】_fit_elasticnet：训练折拟合缩放器，再用 L1/L2 混合正则的 ElasticNet 拟合连续效用
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】调用 repair._candidate_arrays, StandardScaler().fit, StandardScaler, ElasticNet, setting.get,
+# model.fit, scaler.transform, repair.CandidateHuber
+# 【返回】repair.CandidateHuber(scaler, model)
 def _fit_elasticnet(qids, candidate_ids, static, registry, setting, seed,
                     feature_names=None):
     from sklearn.linear_model import ElasticNet
@@ -674,6 +754,11 @@ def _fit_elasticnet(qids, candidate_ids, static, registry, setting, seed,
     return repair.CandidateHuber(scaler, model)
 
 
+# 【函数 073.43】_fit_hist_gbr：把训练候选标准化后交给 HistGradientBoostingRegressor，以配置约束树复杂度
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】遍历或迭代输入；调用 repair._candidate_arrays, StandardScaler().fit, StandardScaler, setting.items,
+# HistGradientBoostingRegressor, model.fit, scaler.transform, repair.CandidateHuber
+# 【返回】repair.CandidateHuber(scaler, model)
 def _fit_hist_gbr(qids, candidate_ids, static, registry, setting, seed,
                   feature_names=None):
     from sklearn.ensemble import HistGradientBoostingRegressor
@@ -688,6 +773,11 @@ def _fit_hist_gbr(qids, candidate_ids, static, registry, setting, seed,
     return repair.CandidateHuber(scaler, model)
 
 
+# 【函数 073.44】_fit_catboost_regression：用 CatBoostRegressor 的连续效用回归目标训练
+# 【输入】qids, candidate_ids, static, registry, setting, seed, feature_names=None
+# 【实现】遍历或迭代输入；调用 repair._candidate_arrays, StandardScaler().fit, StandardScaler, setting.items,
+# catboost.CatBoostRegressor, setting.get, model.fit, scaler.transform(matrix).astype
+# 【返回】repair.CandidateHuber(scaler, model)
 def _fit_catboost_regression(qids, candidate_ids, static, registry, setting,
                              seed, feature_names=None):
     """Pointwise CatBoost regression on the utility scale.
@@ -770,6 +860,10 @@ def _preflight_dependencies(arms) -> None:
         )
 
 
+# 【函数 073.46】_predict_pairs：为给定查询和候选构造注册特征矩阵，调用已拟合模型，按(query_id,comment_id)返回分数
+# 【输入】model: Any, qids, candidate_ids, static, feature_names=None
+# 【实现】遍历或迭代输入；调用 np.asarray, hasattr, model.predict_grouped, model.predict, map
+# 【返回】dict(zip(pairs, map(float, values), strict=True))
 def _predict_pairs(model: Any, qids, candidate_ids, static,
                    feature_names=None) -> dict:
     names = tuple(repair.STATIC_PREDICTOR_FEATURES if feature_names is None
@@ -789,6 +883,11 @@ def _predict_pairs(model: Any, qids, candidate_ids, static,
     return dict(zip(pairs, map(float, values), strict=True))
 
 
+# 【函数 073.47】_inner_score：按family种类选择内层评价方向：回归使用误差，排序使用排序质量
+# 【输入】family, predicted, qids, candidate_ids, registry
+# 【实现】调用 repair._query_mean_ndcg_at8, repair._query_mean_mae
+# 【返回】repair._query_mean_ndcg_at8(predicted, qids, candidate_ids,
+# registry)；repair._query_mean_mae(predicted, qids, candidate_ids, registry)
 def _inner_score(family, predicted, qids, candidate_ids, registry) -> float:
     if family == RANKING:
         return repair._query_mean_ndcg_at8(predicted, qids, candidate_ids, registry)

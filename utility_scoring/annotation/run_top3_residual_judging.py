@@ -1,4 +1,21 @@
 #!/usr/bin/env python3
+# 【文件 054】组织 Top3 残余标签准备、判分和锚点稳定性审计
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring/annotation
+# 【主要函数】utc_now, sha256, hash_json, read_jsonl, write_json, write_jsonl, reject_test_path,
+# git_state
+# 【输入接口】path, rows, query, registry 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/statistics.py
+# 【依赖文件】evaluation/utility.py
+# 【依赖文件】shared/llm_client.py
+# 【调用方】candidate_pool/run_m50_dense_frontier_analysis.py
+# 【调用方】candidate_pool/run_m50_graph_frontier_analysis.py
+# 【调用方】utility_scoring/annotation/run_coverage_complete_residual_judging.py
+# 【调用方】evaluation/fusion_strategy_ablation.py
+# 【调用方】evaluation/run_m50_community_frontier_analysis.py
+
 """Prepare, run, and audit frozen Top-3 residual utility-v2 judging.
 
 The command is deliberately staged. ``prepare`` performs every fail-closed

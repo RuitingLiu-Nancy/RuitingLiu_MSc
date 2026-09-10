@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# 【文件 012】按深度层和场景重新抽样，导出相应帖子与评论
+# 【流程位置】数据准备与分区；所属包：data_preparation/sampling
+# 【主要函数】seed_runtime, stream_zst, year_of, tier_of, primary_scenario, load_exclude,
+# build_classifier, run
+# 【输入接口】path 等函数参数；返回值及写出操作见对应函数
+
 """Stratified RE-SAMPLE: depth tier x scenario balanced sample from the raw dump.
 
 Replaces the four ad-hoc legacy batches (main / shallow-hub / deep-hub / rare-

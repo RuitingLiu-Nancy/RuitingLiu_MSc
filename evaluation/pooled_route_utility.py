@@ -1,3 +1,12 @@
+# 【文件 091】在共同已判分池中评价各外部检索路线
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】score_routes, main
+# 【依赖文件】data_preparation/sampling/sample_human_annotation_candidates.py
+# 【依赖文件】evaluation/external_fusion_utility_rerank.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/score_multihop_retrieval.py
+# 【调用方】evaluation/same_post_shortcut_audit.py
+
 """Score external retrieval routes on the frozen route-balanced utility pool.
 
 This is a pooled-judgement evaluation: rankings are projected onto the same

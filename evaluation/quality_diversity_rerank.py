@@ -1,3 +1,13 @@
+# 【文件 092】在已标注深池上比较质量与多样性重排
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】main
+# 【输入接口】candidate, rows, path, matrix, query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】data_preparation/sampling/sample_human_annotation_candidates.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/statistics.py
+# 【调用方】evaluation/external_fusion_utility_rerank.py
+
 """Validation-only quality/diversity reranking over the labelled deep pool.
 
 This module reuses evidence-level LLM utility labels as a *quality* signal and
