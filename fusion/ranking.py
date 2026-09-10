@@ -1,3 +1,13 @@
+# 【文件 049】实现共用 RRF、归一化与分数凸组合，返回融合排名或完整分数
+# 【流程位置】候选池构造与排名融合；所属包：fusion
+# 【主要函数】_as_scored, rrf_fuse, rrf_scores, _minmax, _zscore, _rank_percentile, normalize_scores,
+# cc_scores
+# 【输入接口】source, rows 等函数参数；返回值及写出操作见对应函数
+# 【调用方】fusion/analyze_rq2a_graph_budget_sweep.py
+# 【调用方】fusion/candidate_pool.py
+# 【调用方】evaluation/confirmatory_test200_rq2b.py
+# 【调用方】evaluation/fusion_strategy_ablation.py
+
 """Multi-source fusion retrieval: semantic + bm25 + multi-hop.
 
 Two fusion modes (both standard in the IR literature):
@@ -27,6 +37,10 @@ from collections import defaultdict
 import numpy as np
 
 
+# 【函数 049.01】_as_scored：把每条候选字典转换为ID、数值分数和原记录的三元组
+# 【输入】ranked
+# 【实现】遍历或迭代输入；调用 c.get, out.append
+# 【返回】out
 def _as_scored(ranked):
     """[(comment_id, raw_score)] from an arm's ranked dicts (keep input order)."""
     out = []
@@ -37,6 +51,10 @@ def _as_scored(ranked):
     return out
 
 
+# 【函数 049.02】rrf_fuse：调用未截断RRF分数，按分数排序取前k，再把分数与候选原始元数据组合返回
+# 【输入】source_runs: dict, weights: dict, k0: int=60, k: int=8
+# 【实现】遍历或迭代输入；调用 rrf_scores, source_runs.items, _as_scored, meta.setdefault, score.items, round
+# 【返回】[dict(meta[cid], score=round(s, 5), fused='rrf') for (cid, s) in ordered]
 def rrf_fuse(source_runs: dict, weights: dict, k0: int = 60, k: int = 8):
     """source_runs: {name: ranked_list}. Returns fused ranked list of dicts."""
     score = rrf_scores(source_runs, weights=weights, k0=k0)
@@ -48,6 +66,10 @@ def rrf_fuse(source_runs: dict, weights: dict, k0: int = 60, k: int = 8):
     return [dict(meta[cid], score=round(s, 5), fused="rrf") for cid, s in ordered]
 
 
+# 【函数 049.03】rrf_scores：按每路名次累加 w/(k0+rank)，同 ID 的贡献相加
+# 【输入】source_runs: dict, weights: dict | None=None, k0: int=60
+# 【实现】遍历或迭代输入；调用 defaultdict, source_runs.items, weights.get, _as_scored
+# 【返回】dict(score)
 def rrf_scores(source_runs: dict, weights: dict | None = None,
                k0: int = 60) -> dict[str, float]:
     """Return untruncated canonical RRF scores for a set of ranked runs.
@@ -64,6 +86,10 @@ def rrf_scores(source_runs: dict, weights: dict | None = None,
     return dict(score)
 
 
+# 【函数 049.04】_minmax：按当前查询这一组数值的最小值和最大值缩放
+# 【输入】vals
+# 【实现】遍历或迭代输入；调用 vals.values, vals.items
+# 【返回】{}；{kk: 1.0 for kk in vals}
 def _minmax(vals):
     if not vals:
         return {}
@@ -73,6 +99,10 @@ def _minmax(vals):
     return {kk: (v - lo) / (hi - lo) for kk, v in vals.items()}
 
 
+# 【函数 049.05】_zscore：在当前查询内做z-score标准化，并对无变化的分数组采取确定性处理
+# 【输入】vals
+# 【实现】遍历或迭代输入；调用 np.asarray, vals.values, ordered.std, ordered.mean, vals.items
+# 【返回】{}；{key: 0.0 for key in vals}
 def _zscore(vals):
     """Query-local z-score normalisation with a deterministic constant case."""
     if not vals:
@@ -85,6 +115,10 @@ def _zscore(vals):
     return {key: (float(value) - mean) / std for key, value in vals.items()}
 
 
+# 【函数 049.06】_rank_percentile：把数值次序转换成查询内排名百分位
+# 【输入】vals
+# 【实现】遍历或迭代输入；计算细节见紧接的函数体
+# 【返回】{}；{ordered[0]: 1.0}
 def _rank_percentile(vals):
     """Map larger query-local scores to larger [0, 1] rank percentiles."""
     if not vals:
@@ -95,6 +129,10 @@ def _rank_percentile(vals):
     return {key: rank / (len(ordered) - 1) for rank, key in enumerate(ordered)}
 
 
+# 【函数 049.07】normalize_scores：统一调度查询内归一化，保证同一受控融合实验使用相同的分数变换
+# 【输入】vals: dict[str, float], method: str='minmax'
+# 【实现】对不满足条件的输入抛出异常；调用 _minmax, _zscore, _rank_percentile, ValueError
+# 【返回】_minmax(vals)；_zscore(vals)
 def normalize_scores(vals: dict[str, float], method: str = "minmax") -> dict[str, float]:
     """Canonical query-wise score normalisation used by controlled CC arms."""
     if method == "minmax":
@@ -106,6 +144,11 @@ def normalize_scores(vals: dict[str, float], method: str = "minmax") -> dict[str
     raise ValueError(f"unknown score normalization: {method}")
 
 
+# 【函数 049.08】cc_scores：对每一路先按指定方法归一化，再加权融合相同候选的分数
+# 【输入】source_runs: dict, weights: dict, normalization: str='minmax'
+# 【实现】遍历或迭代输入；调用 source_runs.items, _as_scored, normalize_scores, weights.get, defaultdict,
+# norm_per_source[name].items
+# 【返回】dict(score)
 def cc_scores(source_runs: dict, weights: dict,
               normalization: str = "minmax") -> dict[str, float]:
     """Return untruncated convex-combination scores for a source union."""
@@ -122,6 +165,10 @@ def cc_scores(source_runs: dict, weights: dict,
     return dict(score)
 
 
+# 【函数 049.09】cc_fuse：调用分数凸组合，按融合分数取前k并保留候选元数据
+# 【输入】source_runs: dict, weights: dict, k: int=8, normalization: str='minmax'
+# 【实现】遍历或迭代输入；调用 source_runs.items, _as_scored, meta.setdefault, cc_scores, score.items, round
+# 【返回】[dict(meta[cid], score=round(s, 5), fused='cc') for (cid, s) in ordered]
 def cc_fuse(source_runs: dict, weights: dict, k: int = 8,
             normalization: str = "minmax"):
     """Convex combination of min-max normalised per-source scores."""
@@ -134,6 +181,12 @@ def cc_fuse(source_runs: dict, weights: dict, k: int = 8,
     return [dict(meta[cid], score=round(s, 5), fused="cc") for cid, s in ordered]
 
 
+# 【函数 049.10】fuse：根据mode选择RRF或CC实现
+# 【输入】source_runs: dict, *, mode: str='rrf', weights: dict | None=None, k0: int=60, k: int=8,
+# normalization: str='minmax'
+# 【实现】调用 cc_fuse, rrf_fuse
+# 【返回】cc_fuse(source_runs, weights, k=k, normalization=normalization)；rrf_fuse(source_runs,
+# weights, k0=k0, k=k)
 def fuse(source_runs: dict, *, mode: str = "rrf", weights: dict | None = None,
          k0: int = 60, k: int = 8, normalization: str = "minmax"):
     weights = weights or {}
@@ -146,6 +199,10 @@ def fuse(source_runs: dict, *, mode: str = "rrf", weights: dict | None = None,
 #  Tune CC weights on held-out gold (grid search over a simplex of 3 weights).
 #  Lightweight, no ML deps. Returns best weights + the metric it optimised.
 # --------------------------------------------------------------------------- #
+# 【函数 049.11】tune_cc_weights：遍历配置中的融合权重，以开发参考评价融合结果，选择对应的权重设置
+# 【输入】eval_rows, build_runs, k=8, step=0.1, metric='ndcg'
+# 【实现】遍历或迭代输入；调用 build_runs, r.get, round, cc_fuse, x.get, vals.append, score_fn
+# 【返回】(best_w, round(best, 4))
 def tune_cc_weights(eval_rows, build_runs, k=8, step=0.1, metric="ndcg"):
     """eval_rows: [{query, gold:set}]. build_runs(query)-> {name: ranked_list}.
     Grid-search convex weights for (semantic, bm25, multihop)."""

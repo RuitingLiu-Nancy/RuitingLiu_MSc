@@ -1,3 +1,11 @@
+# 【文件 033】复用单次 PCST 核心，多轮施加已使用节点惩罚并合并多棵树
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】tokenize, split_query_components, component_coverage, MultiPCSTParameters,
+# MultiPCSTRetriever, install_multi_pcst
+# 【输入接口】query, scores 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/local_pcst_retriever.py
+# 【调用方】candidate_pool/run_official_hipporag_bedrock.py
+
 """Diversified multi-tree PCST retrieval on the Official HippoRAG2 graph.
 
 Motivation: a single prize-collecting Steiner tree tends to pick one dominant

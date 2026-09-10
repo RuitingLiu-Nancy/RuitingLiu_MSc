@@ -1,3 +1,10 @@
+# 【文件 097】按预设规则排除药物相关查询，属于研究样本边界处理
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】DrugFilter, from_config
+# 【输入接口】cfg 等函数参数；返回值及写出操作见对应函数
+# 【调用方】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【调用方】evaluation/two_graph_compare.py
+
 """Safety filter: exclude medication-related queries from the study.
 
 Per the research/ethics decision, ADHD MEDICATION questions (dose, side effects,

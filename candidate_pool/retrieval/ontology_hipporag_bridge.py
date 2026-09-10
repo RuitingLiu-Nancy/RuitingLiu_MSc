@@ -1,3 +1,10 @@
+# 【文件 037】在内存中给官方图接入本体骨架，供可关闭的诊断实验
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】BridgeCandidate, load_ontology_spec, select_bridge_candidates, mix_theory_reset,
+# augment_hipporag_with_ontology
+# 【输入接口】path, scores, query 等函数参数；返回值及写出操作见对应函数
+# 【调用方】candidate_pool/run_official_hipporag_bedrock.py
+
 """In-memory ontology spine for an already indexed HippoRAG 2 graph.
 
 This is an adapted diagnostic inspired by semantic/ontology GraphRAG.  It does

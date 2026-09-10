@@ -1,3 +1,10 @@
+# 【文件 067】实现学习种子分数与对应非图基线，供 LUAD 诊断
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring/learned_diffusion/models
+# 【主要函数】MLP, LearnedSeedOnly, CandidateMLP
+# 【输入接口】input, output, candidate 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】utility_scoring/learned_diffusion/models/appnp_static.py
+# 【调用方】utility_scoring/learned_diffusion/training/trainer.py
+
 """Learned Seed Only and matched non-graph baselines."""
 from __future__ import annotations
 

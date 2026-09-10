@@ -1,3 +1,20 @@
+# 【文件 068】提供查询分组验证、SmallMLP、缩放与 LambdaMART 等公共实现
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring/learned_diffusion
+# 【主要函数】read_jsonl, write_json, write_jsonl, cfg, tokens, load_run_features, seed_path_features,
+# build_registry
+# 【输入接口】path, rows, config, registry, query, scores, cfg, input 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/statistics.py
+# 【调用方】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【调用方】candidate_pool/run_m50_dense_frontier_analysis.py
+# 【调用方】utility_scoring/fit_lambdamart_transfer.py
+# 【调用方】utility_scoring/run_lightweight_scorer_search_dev300.py
+# 【调用方】utility_scoring/run_rq2b_scorer_family_oof_dev300.py
+# 【调用方】evidence_selection/run_selection_action_space_repair.py
+# 【调用方】evidence_selection/run_strict_native_graph_conservative_policy.py
+# 【调用方】evidence_selection/run_strict_sbert_mixed_selector.py
+
 """Fair, query-grouped validation of linear, LambdaMART and MLP rerankers.
 
 The module shares one frozen candidate registry, feature schema, qrels and
@@ -384,6 +401,9 @@ def fit_xgb_lambdamart(
     return model
 
 
+# 【函数 068.21】SmallMLP：按配置重复 Linear、ReLU、Dropout，最后 Linear 输出单一分数
+# 【输入】nn.Module
+# 【实现】计算细节见紧接的函数体
 class SmallMLP(nn.Module):
     def __init__(self, input_dim: int, settings: dict):
         super().__init__(); hidden = int(settings["hidden_dim"]); layers=[]

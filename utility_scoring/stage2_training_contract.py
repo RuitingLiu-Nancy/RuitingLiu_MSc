@@ -1,3 +1,11 @@
+# 【文件 075】从冻结分区读取 Dev300 训练契约，不强迫已物化 RRF2 特征池另加载 Graph 标签
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring
+# 【主要函数】load_direct_training_contract
+# 【输入接口】source 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【调用方】utility_scoring/run_lightweight_scorer_search_dev300.py
+# 【调用方】utility_scoring/run_stage2_redesign_crossencoder.py
+
 """Load the frozen Development300 split contract without a Graph pool.
 
 The legacy action-space loader validates Dense plus Graph candidates because

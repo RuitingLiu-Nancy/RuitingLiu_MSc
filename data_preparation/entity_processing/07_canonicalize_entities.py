@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+# 【文件 005】对开放实体提及按类型分块，以词面相似与聚类合并规范实体
+# 【流程位置】数据准备与分区；所属包：data_preparation/entity_processing
+# 【主要函数】norm, slug, is_bad_phrase, load_mentions, compact_counts, phrase_table, block_key,
+# vectorize
+# 【输入接口】path, input 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】shared/io_utils.py
+
 """Canonicalise open LLM entities with blocking + local NLP similarity.
 
 This is the next step after llm_extract_open_entities.py. It is stricter than

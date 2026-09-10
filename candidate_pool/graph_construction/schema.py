@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 【文件 022】集中定义本体、标注轴和图结构常量，供构图及检索共用
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/graph_construction
+# 【主要函数】包声明及共享定义
+# 【调用方】candidate_pool/graph_construction/01_build_ontology_graph.py
+
 """Annotation and graph schema constants used by the construction pipeline.
 
 Every fixed annotation axis below has an anchoring citation in the dissertation.

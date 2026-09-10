@@ -1,3 +1,10 @@
+# 【文件 024】封装 BM25、TF-IDF、BERT 向量检索及评价接口
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】toks, BaselineOverlap, BM25, TfidfCosine, BertCosine, dcg, ndcg_at, eval_ranking
+# 【调用方】candidate_pool/retrieval/base_retriever.py
+# 【调用方】candidate_pool/retrieval/concept_encoder.py
+# 【调用方】evaluation/two_graph_compare.py
+
 """Retrieval backends + IR metrics (slimmed from eval_retrievers.py).
 
 KEPT: toks, BM25, TfidfCosine, BertCosine, ndcg_at, eval_ranking, load_corpus,

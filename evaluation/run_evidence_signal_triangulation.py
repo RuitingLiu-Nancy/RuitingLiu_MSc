@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+# 【文件 094】RQ1：比较相似度、判定效用和社区回复对应，包括查询内中心化分析
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】utc_now, sha256, resolve, reject_test_path, load_analysis_config, association_statistics,
+# within_query_summary, render_figure
+# 【输入接口】path, rows, candidate, source, output, query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/run_m50_community_frontier_analysis.py
+# 【依赖文件】fusion/run_depth_graph_utility_community_frontier.py
+# 【依赖文件】shared/io_utils.py
+
 """Candidate-level triangulation of similarity, utility, and reply correspondence.
 
 The analysis is deliberately post-hoc and development-only.  It joins the

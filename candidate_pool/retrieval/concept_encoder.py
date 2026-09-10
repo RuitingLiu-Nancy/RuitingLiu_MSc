@@ -1,3 +1,12 @@
+# 【文件 026】把查询与图中实体或本体概念编码到共同向量空间
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】Target, ConceptEncoder
+# 【输入接口】query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/backends.py
+# 【依赖文件】configuration/__init__.py
+# 【调用方】candidate_pool/retrieval/hierarchy.py
+# 【调用方】candidate_pool/retrieval/multihop.py
+
 """Shared bi-encoder for query ↔ graph-target matching (the common base).
 
 Both retrieval paradigms reduce to ONE problem: match a query text to graph

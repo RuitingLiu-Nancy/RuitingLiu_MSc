@@ -1,4 +1,20 @@
 #!/usr/bin/env python3
+# 【文件 043】在冻结 M<=50 Dense 池中计算访问与选择前沿
+# 【流程位置】候选访问与图检索；所属包：candidate_pool
+# 【主要函数】load_rankings, write_csv, static_features_for_arm, build_action_features, build_actions,
+# run_selector_arm, aggregate_metrics, main
+# 【输入接口】path, rows, query, candidate, registry 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/statistics.py
+# 【依赖文件】utility_scoring/annotation/run_top3_residual_judging.py
+# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
+# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【调用方】candidate_pool/run_m50_graph_frontier_analysis.py
+# 【调用方】evidence_selection/run_selection_action_space_repair.py
+# 【调用方】evaluation/confirmatory_test200_rq2b.py
+# 【调用方】evaluation/run_m50_community_frontier_analysis.py
+
 """Coverage-complete Dense M<=50 frontier with the frozen Report-91 selector.
 
 The command is development100-only and local-only.  It consumes the frozen

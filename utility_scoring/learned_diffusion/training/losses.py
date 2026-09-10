@@ -1,3 +1,9 @@
+# 【文件 070】定义 LUAD 按查询平衡的银标签损失，区别于主评分器训练入口
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring/learned_diffusion/training
+# 【主要函数】eligible_pairs, query_ranking_loss
+# 【输入接口】scores 等函数参数；返回值及写出操作见对应函数
+# 【调用方】utility_scoring/learned_diffusion/training/trainer.py
+
 """Query-balanced silver-label objectives for LUAD."""
 from __future__ import annotations
 

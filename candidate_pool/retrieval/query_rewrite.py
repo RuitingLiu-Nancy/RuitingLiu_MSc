@@ -1,3 +1,14 @@
+# 【文件 038】组织四类冻结、忠实性受约束的问题改写，不读取效用标签选改写
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】content_tokens, extract_json_object, QueryRewriteParameters, RewriteResult,
+# BaseQueryRewriter, FaithfulCompressionRewriter, NeedConstraintDecompositionRewriter,
+# ConceptStepBackRewriter
+# 【输入接口】query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/iterative_retrieval.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】shared/llm_client.py
+# 【调用方】candidate_pool/retrieval/graph_entry_rewrite.py
+
 """Round-3 structured query rewrite pipeline (docs_v2/48 Prompt 1).
 
 Four faithfulness-constrained rewriters over the SAME frozen Official

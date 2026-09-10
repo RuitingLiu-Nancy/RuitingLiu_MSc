@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+# 【文件 083】在 RQ2b 选择已冻结后，补充集合层社区对应分析
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】run, main
+# 【配置】configuration/params.yaml → rq2b_set_correspondence
+# 【输入接口】path, rows, output 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evidence_selection/__init__.py
+# 【依赖文件】evidence_selection/run_selection_action_space_repair.py
+# 【依赖文件】evidence_selection/run_set_aware_selection_ablation.py
+
 """Post-hoc set-level community correspondence for frozen RQ2b outputs.
 
 This audit does not train, tune, select, encode, or call an external service.

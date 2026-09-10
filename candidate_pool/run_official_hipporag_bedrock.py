@@ -1,4 +1,20 @@
 #!/usr/bin/env python3
+# 【文件 045】包装固定版本官方 HippoRAG2，配置图入口、识别、重启和输出
+# 【流程位置】候选访问与图检索；所属包：candidate_pool
+# 【主要函数】run, main
+# 【输入接口】path, query, scores 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/dense_graph_bridge.py
+# 【依赖文件】candidate_pool/retrieval/iterative_retrieval.py
+# 【依赖文件】candidate_pool/retrieval/local_pcst_retriever.py
+# 【依赖文件】candidate_pool/retrieval/multi_pcst.py
+# 【依赖文件】candidate_pool/retrieval/official_graph_adapter.py
+# 【依赖文件】candidate_pool/retrieval/official_query_aware_ppr.py
+# 【依赖文件】candidate_pool/retrieval/ontology_hipporag_bridge.py
+# 【依赖文件】candidate_pool/retrieval/relation_sidecar.py
+# 【依赖文件】candidate_pool/retrieval/spreading_activation.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】shared/llm_client.py
+
 """Run the maintained HippoRAG implementation on the validation adapter.
 
 This runner deliberately accepts only the validation adapter emitted by

@@ -1,3 +1,15 @@
+# 【文件 035】只读包装官方 igraph、节点向量与评论映射，为查询时变体提供接口
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】file_sha256, OfficialGraphAdapter
+# 【输入接口】path, query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/hub_correction.py
+# 【依赖文件】candidate_pool/retrieval/relation_sidecar.py
+# 【调用方】candidate_pool/retrieval/dense_graph_bridge.py
+# 【调用方】candidate_pool/retrieval/local_pcst_retriever.py
+# 【调用方】candidate_pool/retrieval/official_query_aware_ppr.py
+# 【调用方】candidate_pool/retrieval/spreading_activation.py
+# 【调用方】candidate_pool/run_official_hipporag_bedrock.py
+
 """Read-only adapter over the persisted Official HippoRAG2 igraph.
 
 It exposes the exact official node ids, passage mapping and original edge

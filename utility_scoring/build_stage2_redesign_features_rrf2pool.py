@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# 【文件 056】限定 RRF2 训练池，并补消融列
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring
+# 【主要函数】run, main
+# 【配置】configuration/params.yaml → stage2_redesign_features_rrf2pool_rawtext
+# 【输入输出】output_dir=out/stage2_redesign_features_rrf2pool_rawtext_v1
+# 【输入输出】features_parquet=out/stage2_redesign_features_dev300_rawtext_v1/stage2_features_11.parquet
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】fusion/analyze_rq2a_graph_budget_sweep.py
+
 """RRF2-only feature matrix with the two legacy columns the ablation needs.
 
 Execution pack v3 tightens the scorer training pool from the RRF2 union RRF3

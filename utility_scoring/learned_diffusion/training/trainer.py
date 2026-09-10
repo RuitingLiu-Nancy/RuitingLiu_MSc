@@ -1,3 +1,14 @@
+# 【文件 071】加载局部图和标签，训练及评价 LUAD 种子模型
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring/learned_diffusion/training
+# 【主要函数】seed_everything, build_model, train_fold, static_scores, query_metrics, summarize_metrics,
+# run_cross_validation, toy_overfit
+# 【输入接口】cfg, scores, rows 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】utility_scoring/learned_diffusion/config.py
+# 【依赖文件】utility_scoring/learned_diffusion/data/judgment_dataset.py
+# 【依赖文件】utility_scoring/learned_diffusion/models/seed_scorer.py
+# 【依赖文件】utility_scoring/learned_diffusion/training/losses.py
+
 """Query-balanced training and evaluation for the LUAD seed pilot."""
 from __future__ import annotations
 

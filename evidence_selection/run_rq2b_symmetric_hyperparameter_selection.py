@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# 【文件 077】用同一查询内层划分和配对 1-SE 规则选择整数 r 与连续网格 beta
+# 【流程位置】固定数量的证据选择；所属包：evidence_selection
+# 【主要函数】_scorers, _swap_utilities, _residual_utilities, _inner_folds, _nested_choice, _cross_fit,
+# _paired, run
+# 【配置】configuration/params.yaml → rq2b_symmetric_hyperparameter_selection_dev300
+# 【输入接口】cfg, config, path, output 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【调用方】evaluation/run_stage2_community_dev300_complete.py
+
 """Select the swap radius r and the residual weight beta by the same procedure.
 
 The Stage-2 comparison asks whether reintroducing the first-stage ordering into
@@ -51,6 +61,10 @@ except ModuleNotFoundError:
 DEFAULT_SCORERS = ["candidate_huber", "candidate_small_mlp", "candidate_lambdamart"]
 
 
+# 【函数 077.01】_scorers：读取并核对本次选择器参数实验涉及哪些评分器
+# 【输入】cfg: dict
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 cfg.get, ValueError, set(DEFAULT_SCORERS).issubset
+# 【返回】names
 def _scorers(cfg: dict) -> list[str]:
     """The arms this configuration selects hyperparameters for.
 
@@ -138,6 +152,11 @@ def _load_folds(path: Path, qids: set[str]) -> dict[tuple[int, int], tuple[list[
     return folds
 
 
+# 【函数 077.05】_swap_utilities：读取各评分器、各整数替换半径和各查询的已实现效用，供对称选参使用
+# 【输入】cfg: dict[str, Any]
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 _scorers, pq.read_table(cfg['stage2_selected_sets']).to_pylist,
+# pq.read_table, out[scorer].setdefault, out.items, ValueError
+# 【返回】out
 def _swap_utilities(cfg: dict[str, Any]) -> dict[str, dict[int, dict[str, float]]]:
     """scorer -> r -> query -> realised utility, at the registered depth and entry."""
     depth, entry = int(cfg["pool_depth"]), str(cfg["entry_ranking"])
@@ -161,6 +180,11 @@ def _swap_utilities(cfg: dict[str, Any]) -> dict[str, dict[int, dict[str, float]
     return out
 
 
+# 【函数 077.06】_residual_utilities：读取各评分器、各beta网格和各查询的已实现效用，供对称选参使用
+# 【输入】cfg: dict[str, Any]
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 _scorers, pq.read_table(cfg['residual_beta_sweep']).to_pylist,
+# pq.read_table, round, out[scorer].setdefault, out.items, ValueError
+# 【返回】out
 def _residual_utilities(cfg: dict[str, Any]) -> dict[str, dict[float, dict[str, float]]]:
     """scorer -> beta -> query -> realised utility."""
     out: dict[str, dict[float, dict[str, float]]] = {s: {} for s in _scorers(cfg)}
@@ -183,6 +207,11 @@ def _residual_utilities(cfg: dict[str, Any]) -> dict[str, dict[float, dict[str, 
 
 # --------------------------------------------------------------------- selection rule
 
+# 【函数 077.07】_inner_folds：将当前外层训练查询按固定随机规则划成内层验证组，组内候选随查询整体移动
+# 【输入】train: list[str], count: int, seed: int
+# 【实现】遍历或迭代输入；对不满足条件的输入抛出异常；调用 np.random.default_rng, rng.permutation, folds[position %
+# count].append, ValueError
+# 【返回】folds
 def _inner_folds(train: list[str], count: int, seed: int) -> list[list[str]]:
     """Deterministic query-grouped inner split of one outer training fold."""
     order = sorted(train)
@@ -198,6 +227,12 @@ def _inner_folds(train: list[str], count: int, seed: int) -> list[list[str]]:
     return folds
 
 
+# 【函数 077.08】_nested_choice：在外层训练查询的内层折上比较网格值
+# 【输入】grid: list[Any], utilities: dict[Any, dict[str, float]], train: list[str], inner_count: int,
+# seed: int, conservative: str
+# 【实现】遍历或迭代输入；调用 _inner_folds, statistics.fmean, statistics.stdev, admissible.append
+# 【返回】(chosen, {'inner_cv_best': float(cv_mean[best]), 'inner_cv_best_grid_value': float(best),
+# 'inner_cv_at_chosen': float(cv_mean[chosen]), 'pai
 def _nested_choice(
     grid: list[Any],
     utilities: dict[Any, dict[str, float]],
@@ -251,6 +286,12 @@ def _nested_choice(
     }, curve
 
 
+# 【函数 077.09】_cross_fit：逐外层折只用训练查询选参数，再在该折留出查询上取对应选择器效用，汇总选择与诊断
+# 【输入】grid: list[Any], utilities: dict[Any, dict[str, float]], folds: dict[tuple[int, int],
+# tuple[list[str], list[str]]], conservative: str, inner_count: int, inner_seed: int
+# 【实现】遍历或迭代输入；调用 folds.items, _nested_choice, picks.append, curve_rows.append, held.setdefault(q,
+# []).append, held.setdefault
+# 【返回】(held, picks, curve_rows)
 def _cross_fit(
     grid: list[Any],
     utilities: dict[Any, dict[str, float]],
@@ -280,6 +321,12 @@ def _cross_fit(
     return held, picks, curve_rows
 
 
+# 【函数 077.10】_paired：对同查询的两个条件做配对比较
+# 【输入】left: dict[str, float], right: dict[str, float], draws: int, seed: int
+# 【实现】遍历或迭代输入；调用 np.array, np.random.default_rng, diff[rng.integers(0, diff.size, size=(draws,
+# diff.size))].mean, rng.integers, np.percentile, diff.mean, (diff > 0).sum, (diff == 0).sum
+# 【返回】{'mean_delta': float(diff.mean()), 'ci_low': float(low), 'ci_high': float(high), 'wins':
+# int((diff > 0).sum()), 'ties': int((diff == 0).sum(
 def _paired(left: dict[str, float], right: dict[str, float], draws: int, seed: int) -> dict[str, float]:
     qids = sorted(set(left) & set(right))
     diff = np.array([left[q] - right[q] for q in qids], dtype=np.float64)

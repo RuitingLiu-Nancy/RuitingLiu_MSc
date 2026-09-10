@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+# 【文件 079】固定 OOF 分数，仅改变 MMR 式集合冗余惩罚与替换预算
+# 【流程位置】固定数量的证据选择；所属包：evidence_selection
+# 【主要函数】anchored_mmr_select, run, main
+# 【配置】configuration/params.yaml → set_aware_selection_ablation
+# 【输入接口】scores, query, cfg, rows, config, output 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evidence_selection/run_selection_action_space_repair.py
+# 【调用方】evaluation/analyze_rq2b_set_correspondence.py
+
 """Matched development-only set-aware evidence-selection ablation.
 
 The runner reuses the frozen out-of-fold candidate-utility predictions and

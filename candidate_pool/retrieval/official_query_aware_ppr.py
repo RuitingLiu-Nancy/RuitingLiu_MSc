@@ -1,3 +1,10 @@
+# 【文件 036】组装官方 PPR 的临时查询相关转移权重，不持久修改图
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】TransitionParameters, install_transition_profiles
+# 【输入接口】query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/official_graph_adapter.py
+# 【调用方】candidate_pool/run_official_hipporag_bedrock.py
+
 """Unified temporary-transition profiles for Official HippoRAG2 PPR."""
 from __future__ import annotations
 

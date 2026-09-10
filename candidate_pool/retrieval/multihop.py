@@ -1,3 +1,12 @@
+# 【文件 034】实现实体种子、多跳遍历和评论聚合等图检索操作
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】MultiHopRetriever
+# 【输入接口】query, path 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/base_retriever.py
+# 【依赖文件】candidate_pool/retrieval/concept_encoder.py
+# 【依赖文件】configuration/__init__.py
+# 【调用方】evaluation/two_graph_compare.py
+
 """Multi-hop (k-hop) graph retrieval over the entity+relation layer.
 
 Method (SG-RAG subgraph retrieval + Think-on-Graph path traversal):

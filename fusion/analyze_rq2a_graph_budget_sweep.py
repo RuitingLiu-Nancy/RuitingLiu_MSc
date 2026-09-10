@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# 【文件 047】读取冻结 Graph 预算扫描和效用标签，统计 Oracle U@8 及配对不确定性
+# 【流程位置】候选池构造与排名融合；所属包：fusion
+# 【主要函数】stable_unique, mean, load_utility, load_graph, load_scored_dense, load_scored_graph,
+# weighted_interleave, ordered_fusion_ids
+# 【输入接口】path, rows, output, config, candidate 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/consolidate_rq2_complete_experiment_data.py
+# 【依赖文件】fusion/ranking.py
+# 【依赖文件】shared/io_utils.py
+# 【调用方】utility_scoring/build_stage2_redesign_features_rrf2pool.py
+
 """Analyse the frozen RQ2a Graph-budget sweep after utility-v2 completion.
 
 This is a deterministic local analysis.  It reuses the Chapter 5 Oracle U@8
@@ -58,6 +69,10 @@ STAGE1_METHODS = (
 )
 
 
+# 【函数 047.01】stable_unique：在保留首次出现顺序的同时去掉重复ID，为候选池和最终集合提供确定性身份
+# 【输入】values: Iterable[str]
+# 【实现】遍历或迭代输入；调用 dict.fromkeys
+# 【返回】list(dict.fromkeys((str(value) for value in values)))
 def stable_unique(values: Iterable[str]) -> list[str]:
     return list(dict.fromkeys(str(value) for value in values))
 

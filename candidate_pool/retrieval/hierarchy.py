@@ -1,3 +1,10 @@
+# 【文件 029】在本体图上从概念沿 SUMMARY_OF 边向评论层检索
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】HierarchyRetriever
+# 【输入接口】query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/concept_encoder.py
+# 【依赖文件】configuration/__init__.py
+
 """Paradigm B — ontology-hierarchy (SUMMARY_OF) top-down retrieval.
 
 Companion to retrieval/multihop.py (paradigm A). Same graph, DIFFERENT edges:

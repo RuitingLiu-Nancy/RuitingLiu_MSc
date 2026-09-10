@@ -1,4 +1,19 @@
 #!/usr/bin/env python3
+# 【文件 055】从文本、向量、原始路线排名及 Dense8 锚点构造注册特征
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring
+# 【主要函数】_percentile, _route_ranks, _build, run, main
+# 【配置】configuration/params.yaml → stage2_redesign_features_rawtext
+# 【输入输出】output_dir=out/stage2_redesign_features_dev300_rawtext_v1
+# 【输入输出】corpus=out/hipporag_official_adapter_rawtext_v1/adhd_peer_support_validation_corpus.json
+# 【输入输出】queries=out/development300_analysis_inputs_v1/development300_queries_normalized.json
+# 【输入输出】utility_registry=out/development300_m50_utility_judging_openrouter_coreweave_v1/complete/utility_registry_coverage_complete.jsonl
+# 【依赖文件】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evidence_selection/__init__.py
+# 【依赖文件】evidence_selection/run_selection_action_space_repair.py
+
 """Experiment 2 of STAGE2_REDESIGN_SPEC: build the revised 11-feature matrix.
 
 Feature families (SPEC sections 5-10):
@@ -81,6 +96,10 @@ def _write_csv(path: Path, rows: list[dict]) -> None:
         writer.writerows(rows)
 
 
+# 【函数 055.04】_percentile：把原始排名 j 映射成 1-(j-1)/(R-1)
+# 【输入】rank: int | None, depth: int
+# 【实现】对不满足条件的输入抛出异常；调用 ValueError
+# 【返回】0.0；1.0 - (rank - 1) / (depth - 1)
 def _percentile(rank: int | None, depth: int) -> float:
     """SPEC section 6: p_r = 1 - (j-1)/(R-1); absent from the route -> 0.0.
 
@@ -95,6 +114,11 @@ def _percentile(rank: int | None, depth: int) -> float:
     return 1.0 - (rank - 1) / (depth - 1)
 
 
+# 【函数 055.05】_route_ranks：分别读取Dense、BM25与Graph原始排名，建立query→candidate→rank映射
+# 【输入】cfg: dict[str, Any]
+# 【实现】遍历或迭代输入；调用 defaultdict, _read_jsonl, pq.read_table(cfg['bm25_rankings']).to_pylist,
+# pq.read_table
+# 【返回】{'D_dense': dict(dense), 'B_bm25': dict(bm25), 'G_graph': dict(graph)}
 def _route_ranks(cfg: dict[str, Any]) -> dict[str, dict[str, dict[str, int]]]:
     """query -> candidate -> rank, per raw route.  No fusion is read here."""
     dense: dict[str, dict[str, int]] = defaultdict(dict)
@@ -111,6 +135,12 @@ def _route_ranks(cfg: dict[str, Any]) -> dict[str, dict[str, dict[str, int]]]:
     return {"D_dense": dict(dense), "B_bm25": dict(bm25), "G_graph": dict(graph)}
 
 
+# 【函数 055.06】_build：遍历查询和候选，从向量余弦、IDF 词面重叠、log1p 词数及 Dense8 最大/平均相似度构造特征，只输出配置注册的列
+# 【输入】pool: dict[str, list[str]], *, cfg, ranks, depths, anchors, candidate_vectors,
+# query_vectors, corpus_text, query_text, idf
+# 【实现】遍历或迭代输入；调用 map, _cosine, _lexical_diagnostics, math.log1p, _tokenize, statistics.fmean,
+# ranks[route][qid].get, _percentile
+# 【返回】out
 def _build(pool: dict[str, list[str]], *, cfg, ranks, depths, anchors,
            candidate_vectors, query_vectors, corpus_text, query_text,
            idf) -> dict[tuple[str, str], dict[str, float]]:

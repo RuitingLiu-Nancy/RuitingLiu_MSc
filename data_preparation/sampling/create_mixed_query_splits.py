@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# 【文件 014】合并原始与扩展审计来源并形成固定查询分区
+# 【流程位置】数据准备与分区；所属包：data_preparation/sampling
+# 【主要函数】main
+# 【输入接口】path, source, rows 等函数参数；返回值及写出操作见对应函数
+# 【调用方】evaluation/run_closed600_e5_lopo_preflight.py
+
 """Create mixed validation/test query splits from original and expanded audits.
 
 This script operates on post-level role-audit CSVs. It keeps only safe

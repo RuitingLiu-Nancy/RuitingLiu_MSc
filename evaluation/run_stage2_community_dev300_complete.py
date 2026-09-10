@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+# 【文件 096】对当前 Stage2 各评分器和选择器输出统一计算 Dev300 社区指标
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】_paired, run, _emit, main
+# 【配置】configuration/params.yaml → stage2_community_dev300_complete
+# 【输入输出】output_dir=out/stage2_community_dev300_complete_v1
+# 【输入输出】corpus=out/hipporag_official_adapter/adhd_peer_support_validation_corpus.json
+# 【输入输出】utility_registry=out/rq2a_graph_budget_sweep_v1/complete/utility_registry_coverage_complete.jsonl
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evaluation/run_m50_community_frontier_analysis.py
+# 【依赖文件】evidence_selection/__init__.py
+# 【依赖文件】evidence_selection/run_rq2b_symmetric_hyperparameter_selection.py
+
 """Community-response correspondence for every CURRENT Stage-2 system/selector.
 
 Post-hoc evaluation only.  No model is fitted, no hyperparameter is chosen, no
@@ -124,6 +138,10 @@ def _ids_hash(ids) -> str:
     return hashlib.sha256("\0".join(map(str, ids)).encode("utf-8")).hexdigest()[:16]
 
 
+# 【函数 096.04】_paired：对同查询的两个条件做配对比较
+# 【输入】left: dict[str, float], right: dict[str, float], draws: int, seed: int
+# 【实现】调用 sym._paired
+# 【返回】sym._paired(left, right, draws, seed)
 def _paired(left: dict[str, float], right: dict[str, float], draws: int,
             seed: int) -> dict[str, Any]:
     """The project's whole-query paired bootstrap, delegated unchanged."""
@@ -470,6 +488,12 @@ def run(config_key: str = CONFIG_KEY, output_dir: Path | None = None,
                  per_query_rows, items_rows, audit, replies_by_query, reply_total)
 
 
+# 【函数 096.07】_emit：集中写出结果表、补充JSON与manifest，维持结果和身份记录对应
+# 【输入】destination, started, cfg, systems, provenance, metric_by_system, per_query_rows,
+# items_rows, audit, replies_by_query, reply_total
+# 【实现】遍历或迭代输入；通过上下文管理器管理资源；调用 ALIAS_OF.get, matrix.append, statistics.fmean, acc[m].values,
+# contrast, cross.extend, cfg.get, counts.values
+# 【返回】manifest
 def _emit(destination, started, cfg, systems, provenance, metric_by_system,
           per_query_rows, items_rows, audit, replies_by_query, reply_total):
     draws, seed = int(cfg["bootstrap_draws"]), int(cfg["bootstrap_seed"])

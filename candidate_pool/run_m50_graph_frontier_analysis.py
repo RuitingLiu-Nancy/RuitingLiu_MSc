@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+# 【文件 044】比较固定或残差 Graph4 对同一 Dense 深度前沿的边际作用
+# 【流程位置】候选访问与图检索；所属包：candidate_pool
+# 【主要函数】read_csv, mean_oof, oracle_at8, main
+# 【输入接口】path, rows, query, registry 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/run_dense_semantic_drift_rescue_audit.py
+# 【依赖文件】candidate_pool/run_m50_dense_frontier_analysis.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】utility_scoring/annotation/run_top3_residual_judging.py
+
 """Fixed/residual Graph4 marginal analysis on the frozen M<=50 Dense arms."""
 from __future__ import annotations
 

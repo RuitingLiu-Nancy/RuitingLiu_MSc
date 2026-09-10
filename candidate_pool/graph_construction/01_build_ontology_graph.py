@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+# 【文件 019】构造三层本体图及 SUMMARY_OF 等边
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/graph_construction
+# 【主要函数】Graph, evidence_strength, build, run, main
+# 【依赖文件】candidate_pool/graph_construction/__init__.py
+# 【依赖文件】candidate_pool/graph_construction/schema.py
+# 【依赖文件】shared/io_utils.py
+
 """Step 3 (doc sec 5): build the explicit three-tier hierarchical graph.
 
 Tiers (doc 5.1):

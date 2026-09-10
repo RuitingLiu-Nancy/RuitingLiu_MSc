@@ -1,3 +1,8 @@
+# 【文件 048】先合并去重多路候选，再保留来源信息与各路顺序，供固定池实验使用
+# 【流程位置】候选池构造与排名融合；所属包：fusion
+# 【主要函数】build_trec_style_pool, build_candidate_pool_v2
+# 【依赖文件】fusion/ranking.py
+
 """Union-first candidate pools for fixed-graph retrieval experiments."""
 from __future__ import annotations
 

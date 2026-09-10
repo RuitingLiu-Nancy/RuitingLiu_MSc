@@ -1,3 +1,10 @@
+# 【文件 039】对每个通道保留官方识别门，再组合通过识别的重启向量
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】ChannelResult, build_official_restart, run_independent_channel, normalized_union,
+# run_original_plus_rewrites
+# 【输入接口】query, scores 等函数参数；返回值及写出操作见对应函数
+# 【调用方】utility_scoring/learned_diffusion/data/graph_adapter.py
+
 """Official-recognition-preserving graph-entry channel retrieval and union.
 
 Every channel independently executes ``get_fact_scores`` and ``rerank_facts``.

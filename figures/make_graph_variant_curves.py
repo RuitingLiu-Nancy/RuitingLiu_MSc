@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# 【文件 104】读取图变体候选访问结果并画论文曲线
+# 【流程位置】结果可视化；所属包：figures
+# 【主要函数】main
+
 """Graph-route variant candidate-access curves, drawn to match the Stage-1 figure."""
 import csv, collections
 import matplotlib

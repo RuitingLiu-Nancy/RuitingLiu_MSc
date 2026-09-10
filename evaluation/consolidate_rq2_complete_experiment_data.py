@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+# 【文件 086】把冻结 RQ2 结果整理成事实报告，不重新训练或选择最优模型
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】rq2_read_json, rq2_read_jsonl, rq2_sha256, rq2_mean, rq2_fmt, rq2_pct, rq2_ci_text,
+# rq2_markdown_table
+# 【输入接口】path, rows 等函数参数；返回值及写出操作见对应函数
+# 【调用方】fusion/analyze_rq2a_graph_budget_sweep.py
+
 """Consolidate the frozen RQ2 experiment artifacts into one factual data report.
 
 This script performs local joins and deterministic query-level bootstrap

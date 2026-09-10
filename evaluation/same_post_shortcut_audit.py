@@ -1,3 +1,14 @@
+# 【文件 098】审计同帖捷径对检索评价的影响，辅助解释 Subtask 1 到跨帖的变化
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】filter_same_post, run_audit, main
+# 【输入接口】query, path 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】data_preparation/sampling/sample_human_annotation_candidates.py
+# 【依赖文件】evaluation/external_fusion_utility_rerank.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/pooled_route_utility.py
+# 【依赖文件】evaluation/score_multihop_retrieval.py
+# 【调用方】evaluation/run_closed600_e5_lopo_preflight.py
+
 """Validation-only audit of the same-post retrieval shortcut.
 
 The Reddit structural gold for a query consists of replies to that same post.

@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# 【文件 016】对人工标注候选进行分层抽样，输出可审阅的候选清单
+# 【流程位置】数据准备与分区；所属包：data_preparation/sampling
+# 【主要函数】sample, main
+# 【输入接口】path, rows, query 等函数参数；返回值及写出操作见对应函数
+# 【调用方】evaluation/external_fusion_utility_rerank.py
+# 【调用方】evaluation/pooled_route_utility.py
+# 【调用方】evaluation/quality_diversity_rerank.py
+# 【调用方】evaluation/run_closed600_e5_lopo_preflight.py
+# 【调用方】evaluation/same_post_shortcut_audit.py
+
 """Stratified candidate sampler for human evidence annotation.
 
 This script reads the deep evidence-card pool from study_platform's SQLite DB

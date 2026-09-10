@@ -1,3 +1,9 @@
+# 【文件 028】校验冻结摘要产生的图入口改写，保持原问题身份和约束
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】correct_source_spans, FrozenSummaryGraphEntryRewriter
+# 【输入接口】query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】candidate_pool/retrieval/query_rewrite.py
+
 """Frozen-summary graph-entry rewrites with deterministic hard validation.
 
 This module extends the canonical rewrite lifecycle in ``query_rewrite``.  It

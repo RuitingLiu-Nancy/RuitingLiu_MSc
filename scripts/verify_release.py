@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# 【文件 110】校验发布目录、Python 语法、内部导入、模型产物与文件哈希
+# 【流程位置】发布文件校验；所属包：scripts
+# 【主要函数】module_exists
+
 from __future__ import annotations
 
 import ast

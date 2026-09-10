@@ -1,3 +1,12 @@
+# 【文件 031】在官方检索器外组织一次 IRCoT 式推理后再检索
+# 【流程位置】候选访问与图检索；所属包：candidate_pool/retrieval
+# 【主要函数】para_to_text, is_reasoning_sentence, remove_reasoning_sentences, remove_wh_words,
+# first_sentence, IRCoTParameters, build_cot_prompt, plan_second_query
+# 【输入接口】path 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【调用方】candidate_pool/retrieval/query_rewrite.py
+# 【调用方】candidate_pool/run_official_hipporag_bedrock.py
+
 """One-step IRCoT-style iterative retrieval over the Official HippoRAG2 runner.
 
 Reproduction target: StonyBrookNLP/ircot (Trivedi et al., ACL 2023),

@@ -1,3 +1,17 @@
+# 【文件 088】在冻结 Dev100 上比较融合策略，属于消融
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】load_inputs, build_candidate_registry, common_idcg_rows, fixed_systems, aggregate_metrics,
+# paired_comparisons, metric_audit, residual_report
+# 【输入接口】path, rows, registry, query, cfg, config, source 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【依赖文件】evaluation/community_reply_auxiliary.py
+# 【依赖文件】evaluation/ir_metrics.py
+# 【依赖文件】evaluation/judgment_completeness.py
+# 【依赖文件】evaluation/statistics.py
+# 【依赖文件】fusion/ranking.py
+# 【依赖文件】utility_scoring/annotation/run_top3_residual_judging.py
+# 【调用方】evidence_selection/run_strict_native_graph_conservative_policy.py
+
 """Strict development-only fusion ablation over frozen dev100-v2 artifacts.
 
 The module reuses canonical RRF/CC, utility completeness, graded nDCG,

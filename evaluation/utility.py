@@ -1,3 +1,11 @@
+# 【文件 102】定义六维标签的效用合成及安全上限，供判分与评价共用
+# 【流程位置】检索、效用与社区对应评价；所属包：evaluation
+# 【主要函数】parse_judgment, clamp_score, annotation_prompt, utility_v2
+# 【输入接口】query 等函数参数；返回值及写出操作见对应函数
+# 【依赖文件】configuration/__init__.py
+# 【调用方】utility_scoring/annotation/run_coverage_complete_residual_judging.py
+# 【调用方】utility_scoring/annotation/run_top3_residual_judging.py
+
 """Utility-label contract shared by annotation and evaluation."""
 from __future__ import annotations
 
