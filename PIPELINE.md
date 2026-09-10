@@ -11,18 +11,20 @@ between stages.
 - `data_preparation/sampling/03_resample_stratified.py`
 - `data_preparation/sampling/create_mixed_query_splits.py`
 - `data_preparation/sampling/freeze_research_data_partitions.py`
-- `data_preparation/entity_processing/05_extract_open_entities.py`
-- `data_preparation/entity_processing/06_extract_entities_batch.py`
-- `data_preparation/entity_processing/07_canonicalize_entities.py`
-- `data_preparation/entity_processing/08_ground_relations_global.py`
+
+- `data_preparation/export_hipporag_dataset.py`: export frozen comment IDs and
+  raw-text overlay (`--text-csv`) for the HippoRAG adapter.
 
 ## Candidate-pool construction
 
-- `candidate_pool/run_official_hipporag_bedrock.py`
+- `candidate_pool/run_official_hipporag_bedrock.py`: calls pinned upstream
+  `HippoRAG.index()` and retrieves with `no_recognition` or
+  `fact_only_no_recognition`. Supply model identities explicitly; reuse the
+  matching OpenIE cache for the reported graph.
+- `candidate_pool/analyze_strict_sbert_graph_oracle.py`: shared Primary Graph
+  round-robin merge and fixed original DenseTop8 exclusion.
 - `candidate_pool/run_m50_dense_frontier_analysis.py`
 - `candidate_pool/run_m50_graph_frontier_analysis.py`
-- `candidate_pool/retrieval/` contains the reusable route implementations.
-- `candidate_pool/graph_construction/` contains graph assembly and community detection.
 
 ## Fusion and candidate access
 
@@ -32,6 +34,8 @@ between stages.
 - `fusion/run_depth_graph_utility_community_frontier.py`
 
 ## Utility-aware scoring
+
+- `utility_scoring/reranker_validation.py`: shared loaders, validation and model helpers.
 
 - `utility_scoring/build_stage2_redesign_features.py`
 - `utility_scoring/build_stage2_redesign_features_rrf2pool.py`
@@ -57,3 +61,7 @@ between stages.
 The principal runners read parameters from `configuration/params.yaml` or from
 the file named by `EVIDENCE_PIPELINE_PARAMS`. Relative paths resolve from the
 repository root.
+
+Retired ontology/custom graph and learned-diffusion training experiments are
+on `codex/development-archive`. Main keeps the final pipeline and reported
+controls. The four released model artefacts are unchanged by this cleanup.

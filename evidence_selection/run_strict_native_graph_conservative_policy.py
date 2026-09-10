@@ -9,8 +9,7 @@
 # 【依赖文件】evaluation/judgment_completeness.py
 # 【依赖文件】evaluation/statistics.py
 # 【依赖文件】evidence_selection/run_strict_sbert_mixed_selector.py
-# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
-# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【依赖文件】utility_scoring/reranker_validation.py
 # 【调用方】candidate_pool/run_dense_semantic_drift_rescue_audit.py
 
 """Nested-OOF conservative one-swap policies for strict native Graph candidates.
@@ -67,7 +66,7 @@ try:
         complete_utility_v2_rows,
     )
     from evaluation.statistics import bootstrap_ci
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
     from candidate_pool.analyze_strict_sbert_graph_oracle import (
         _read_jsonl,
         _reject_test,
@@ -91,7 +90,7 @@ except ModuleNotFoundError:
         complete_utility_v2_rows,
     )
     from evaluation.statistics import bootstrap_ci
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
     from candidate_pool.analyze_strict_sbert_graph_oracle import (
         _read_jsonl,
         _reject_test,

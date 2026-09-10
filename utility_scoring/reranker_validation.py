@@ -1,5 +1,5 @@
 # 【文件 068】提供查询分组验证、SmallMLP、缩放与 LambdaMART 等公共实现
-# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring/learned_diffusion
+# 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring
 # 【主要函数】read_jsonl, write_json, write_jsonl, cfg, tokens, load_run_features, seed_path_features,
 # build_registry
 # 【输入接口】path, rows, config, registry, query, scores, cfg, input 等函数参数；返回值及写出操作见对应函数
@@ -49,7 +49,7 @@ from sklearn.preprocessing import StandardScaler
 from torch import nn
 
 if __package__ in {None, ""}:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import configuration as project_config
 from evaluation.ir_metrics import graded_ndcg_at
@@ -90,7 +90,7 @@ def write_jsonl(path: Path, rows: list[dict]) -> None:
 
 
 def cfg(config_key: str = "reranker_signal_validation") -> tuple[Path, dict]:
-    root = Path(__file__).resolve().parents[2]
+    root = Path(__file__).resolve().parents[1]
     raw = project_config.load()[config_key]
     for key in ("output_dir", "old_judgments", "queries", "query_admin", "corpus",
                 "run_registry", "local_graph_dir", "split_manifest",

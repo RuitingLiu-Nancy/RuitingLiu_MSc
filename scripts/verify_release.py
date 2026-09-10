@@ -30,11 +30,7 @@ PROJECT_TITLE = (
 
 REQUIRED_DIRECTORIES = {
     "data_preparation/sampling",
-    "data_preparation/entity_processing",
-    "candidate_pool/retrieval",
-    "candidate_pool/graph_construction",
     "fusion",
-    "utility_scoring/learned_diffusion",
     "utility_scoring/annotation",
     "evidence_selection",
     "evaluation",
@@ -44,10 +40,16 @@ REQUIRED_DIRECTORIES = {
     "models/primary",
     "models/supplementary",
 }
-OBSOLETE_DIRECTORIES = {"graph_rag", "models/sensitivity"}
+OBSOLETE_DIRECTORIES = {
+    "graph_rag", "models/sensitivity", "candidate_pool/graph_construction",
+    "candidate_pool/retrieval", "data_preparation/entity_processing",
+    "utility_scoring/learned_diffusion",
+}
 DOCUMENTED_ENTRYPOINTS = {
     "data_preparation/sampling/freeze_research_data_partitions.py",
     "candidate_pool/run_official_hipporag_bedrock.py",
+    "data_preparation/export_hipporag_dataset.py",
+    "utility_scoring/reranker_validation.py",
     "evaluation/run_evidence_signal_triangulation.py",
     "fusion/analyze_rq2a_graph_budget_sweep.py",
     "fusion/run_depth_graph_utility_community_frontier.py",
@@ -116,7 +118,9 @@ for path in ROOT.rglob("*"):
     text = "" if is_binary_model else path.read_text(encoding="utf-8", errors="ignore")
     if not is_binary_model and relative != Path("scripts/verify_release.py"):
         for label, pattern in PATTERNS.items():
-            if pattern.search(text):
+            # This exact public branch name is release metadata, not an internal note.
+            scan_text = text.replace("codex/development-archive", "development-archive")
+            if pattern.search(scan_text):
                 errors.append(f"{label}: {relative}")
 
 expected_models = {
@@ -145,8 +149,17 @@ for path in python_files:
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             modules = [item.name for item in node.names]
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            modules = [node.module]
+        elif isinstance(node, ast.ImportFrom):
+            if node.level:
+                package = list(path.relative_to(ROOT).parts[:-1])
+                base = package[:len(package) - node.level + 1]
+                module = ".".join(base + ([node.module] if node.module else []))
+            else:
+                module = node.module or ""
+            modules = [module] if module else []
+            # `from package import child` also resolves child module paths when present.
+            modules.extend(module + "." + item.name for item in node.names
+                           if module_exists(module + "." + item.name))
         else:
             continue
         for module in modules:

@@ -2,20 +2,13 @@
 # 【流程位置】公共配置；所属包：configuration
 # 【主要函数】load, params, fusion_weights, prompt_path, prompt, judge_criteria
 # 【输入接口】path 等函数参数；返回值及写出操作见对应函数
-# 【调用方】data_preparation/entity_processing/open_entity_extraction.py
-# 【调用方】candidate_pool/retrieval/concept_encoder.py
-# 【调用方】candidate_pool/retrieval/hierarchy.py
-# 【调用方】candidate_pool/retrieval/iterative_retrieval.py
-# 【调用方】candidate_pool/retrieval/multihop.py
-# 【调用方】candidate_pool/retrieval/query_rewrite.py
 # 【调用方】candidate_pool/run_dense_semantic_drift_rescue_audit.py
 # 【调用方】candidate_pool/run_official_hipporag_bedrock.py
 # 【调用方】fusion/analyze_rq2a_graph_budget_sweep.py
 # 【调用方】utility_scoring/annotation/run_top3_residual_judging.py
 # 【调用方】utility_scoring/build_stage2_redesign_features.py
 # 【调用方】utility_scoring/build_stage2_redesign_features_rrf2pool.py
-# 【调用方】utility_scoring/learned_diffusion/config.py
-# 【调用方】utility_scoring/learned_diffusion/reranker_validation.py
+# 【调用方】utility_scoring/reranker_validation.py
 # 【调用方】utility_scoring/run_lightweight_scorer_search_dev300.py
 # 【调用方】utility_scoring/run_rq2b_scorer_family_oof_dev300.py
 # 【调用方】utility_scoring/run_stage2_redesign_crossencoder.py
@@ -32,7 +25,6 @@
 # 【调用方】evaluation/quality_diversity_rerank.py
 # 【调用方】evaluation/run_evidence_signal_triangulation.py
 # 【调用方】evaluation/run_stage2_community_dev300_complete.py
-# 【调用方】evaluation/two_graph_compare.py
 # 【调用方】evaluation/utility.py
 # 【调用方】shared/llm_client.py
 

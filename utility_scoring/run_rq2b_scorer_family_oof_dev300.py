@@ -9,8 +9,7 @@
 # 【依赖文件】evaluation/community_reply_auxiliary.py
 # 【依赖文件】evidence_selection/__init__.py
 # 【依赖文件】evidence_selection/run_selection_action_space_repair.py
-# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
-# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【依赖文件】utility_scoring/reranker_validation.py
 # 【调用方】utility_scoring/run_lightweight_scorer_search_dev300.py
 
 """Out-of-fold scores for the Stage-2 scorer family, under the frozen contract.
@@ -59,12 +58,12 @@ from evidence_selection import run_selection_action_space_repair as repair  # no
 try:
     import configuration as project_config
     from evaluation.community_reply_auxiliary import now, sha256_file
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
 except ModuleNotFoundError:
     sys.path.insert(0, str(ROOT))
     import configuration as project_config
     from evaluation.community_reply_auxiliary import now, sha256_file
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
 
 import torch  # noqa: E402
 from sklearn.isotonic import IsotonicRegression  # noqa: E402

@@ -4,7 +4,7 @@ __pycache__/
 build/
 *.egg-info/
 out/
-data/
+/data/
 *.jsonl
 *.csv
 *.parquet

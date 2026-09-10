@@ -14,8 +14,7 @@
 # 【依赖文件】configuration/__init__.py
 # 【依赖文件】evaluation/ir_metrics.py
 # 【依赖文件】evaluation/judgment_completeness.py
-# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
-# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【依赖文件】utility_scoring/reranker_validation.py
 # 【调用方】utility_scoring/build_stage2_redesign_features.py
 # 【调用方】utility_scoring/run_lightweight_scorer_search_dev300.py
 # 【调用方】utility_scoring/run_rq2b_scorer_family_oof_dev300.py
@@ -77,7 +76,7 @@ try:
     import configuration as project_config
     from evaluation.ir_metrics import graded_ndcg_at
     from evaluation.judgment_completeness import complete_utility_v2_rows
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
     from candidate_pool.analyze_strict_sbert_graph_oracle import _reject_test
     from candidate_pool.run_dense_semantic_drift_rescue_audit import (
         STATIC_PREDICTOR_FEATURES,
@@ -92,7 +91,7 @@ except ModuleNotFoundError:
     import configuration as project_config
     from evaluation.ir_metrics import graded_ndcg_at
     from evaluation.judgment_completeness import complete_utility_v2_rows
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
     from candidate_pool.analyze_strict_sbert_graph_oracle import _reject_test
     from candidate_pool.run_dense_semantic_drift_rescue_audit import (
         STATIC_PREDICTOR_FEATURES,

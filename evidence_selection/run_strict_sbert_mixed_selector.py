@@ -8,8 +8,7 @@
 # 【依赖文件】evaluation/ir_metrics.py
 # 【依赖文件】evaluation/judgment_completeness.py
 # 【依赖文件】evaluation/statistics.py
-# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
-# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【依赖文件】utility_scoring/reranker_validation.py
 # 【调用方】evidence_selection/run_strict_native_graph_conservative_policy.py
 
 """Nested-OOF mixed-pool selectors for the fully judged strict-SBERT pool.
@@ -54,7 +53,7 @@ try:
         complete_utility_v2_rows,
     )
     from evaluation.statistics import bootstrap_ci
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
     from candidate_pool.analyze_strict_sbert_graph_oracle import (
         _read_jsonl,
         _reject_test,
@@ -71,7 +70,7 @@ except ModuleNotFoundError:
         complete_utility_v2_rows,
     )
     from evaluation.statistics import bootstrap_ci
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
     from candidate_pool.analyze_strict_sbert_graph_oracle import (
         _read_jsonl,
         _reject_test,

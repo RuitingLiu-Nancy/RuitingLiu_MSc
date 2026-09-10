@@ -12,49 +12,6 @@ fusion:
     semantic: 1.0
     bm25: 0.5
     multihop: 0.3
-entity_bridge:
-  w_sem: 1.0
-  w_graph: 0.5
-  min_ent_idf: 1.5
-  top_seed: 60
-  graph_pool: 200
-multihop:
-  max_seeds: 8
-  max_nodes: 60
-  chain_bonus: 1.15
-  decay: hop
-  semantic_seeds: true
-  seed_encoder: bare
-  semantic_seed_topk: 8
-  semantic_seed_min_sim: 0.25
-  seed_union_cap: 16
-  beam: 5
-  hub_deg: 60
-  query_gate: false
-  gate_floor: 0.0
-  gate_power: 1.0
-  entity_idf_power: 0.0
-hipporag_ppr:
-  damping: 0.5
-  node_specificity_power: 1.0
-  max_iter: 100
-  tol: 1.0e-06
-hierarchy:
-  top_concepts: 6
-  per_concept: 50
-  min_sim: 0.0
-  concept_encoder: bare
-densify:
-  normalize: logmax
-  cooc_min: 1
-  knn_k: 5
-  knn_thresh: 0.5
-  max_cluster_size: 10
-  seed: 42
-  type_weights:
-    relation: 1.0
-    cooc: 0.6
-    knn: 0.3
 eval:
   ndcg_k: 8
   recall_ks:
@@ -92,60 +49,6 @@ reranker_validation:
   - 0.4
   max_utility_ndcg_drop: 0.005
   max_reasonable_share_drop: 0.005
-official_transition_profiles:
-  profiles:
-  - static
-  - hub
-  - node
-  - node_relation
-  alpha: 1.0
-  beta: 1.0
-  hub_gamma: 0.5
-  epsilon: 0.05
-  relation_aggregation: max
-official_local_pcst:
-  entity_anchors: 6
-  passage_anchors: 6
-  hops: 2
-  max_local_nodes: 2500
-  max_neighbors_per_node: 100
-  query_prize_top_k: 32
-  passage_prize_top_k: 16
-  max_mapping_entity_degree: 500
-  max_passage_candidates: 500
-  query_prize: 1.0
-  seed_prize: 2.0
-  passage_prize: 0.5
-  anchor_bonus: 2.0
-  base_edge_cost: 0.35
-  hub_cost: 0.75
-official_spreading:
-  top_k_active: 2000
-  gate_epsilon: 0.05
-  hub_gamma: 0.5
-  relation_beta: 1.0
-  relation_epsilon: 0.05
-  relation_aggregation: max
-  early_stop_mass_ratio: 1.0e-06
-  accumulate: true
-official_dense_bridge:
-  dense_anchor_passages: 20
-  max_anchors: 8
-  anchor_max_degree: 500
-  anchor_epsilon: 0.05
-  anchor_degree_gamma: 0.5
-  merge_strategy: interleave
-official_multi_pcst:
-  trees: 2
-  node_prize_multiplier: 0.1
-  edge_cost_multiplier: 3.0
-  passage_prize_multiplier: 0.1
-  coverage_lambda: 0.5
-  redundancy_mu: 0.5
-  cost_gamma: 0.1
-  coverage_threshold: 0.15
-  min_component_tokens: 4
-  max_components: 6
 safety:
   drug_filter: true
 models:

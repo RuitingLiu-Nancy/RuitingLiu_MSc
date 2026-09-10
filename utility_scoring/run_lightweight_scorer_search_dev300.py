@@ -12,8 +12,7 @@
 # 【依赖文件】evidence_selection/__init__.py
 # 【依赖文件】evidence_selection/run_selection_action_space_repair.py
 # 【依赖文件】utility_scoring/__init__.py
-# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
-# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【依赖文件】utility_scoring/reranker_validation.py
 # 【依赖文件】utility_scoring/run_rq2b_scorer_family_oof_dev300.py
 # 【依赖文件】utility_scoring/stage2_training_contract.py
 
@@ -82,12 +81,12 @@ from utility_scoring.stage2_training_contract import (  # noqa: E402
 try:
     import configuration as project_config
     from evaluation.community_reply_auxiliary import now, sha256_file
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
 except ModuleNotFoundError:
     sys.path.insert(0, str(ROOT))
     import configuration as project_config
     from evaluation.community_reply_auxiliary import now, sha256_file
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
 
 
 def _resolve(value: str | Path) -> Path:

@@ -3,7 +3,7 @@
 # 【流程位置】特征构造、效用评分与训练；所属包：utility_scoring
 # 【主要函数】run, predict, main
 # 【输入接口】path, output 等函数参数；返回值及写出操作见对应函数
-# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【依赖文件】utility_scoring/reranker_validation.py
 
 """Fit the frozen final LambdaMART transfer model from a numeric NPZ bundle.
 
@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from utility_scoring.learned_diffusion.reranker_validation import (  # noqa: E402
+from utility_scoring.reranker_validation import (  # noqa: E402
     fit_xgb_lambdamart,
 )
 

@@ -4,8 +4,6 @@
 # 【主要函数】read_table, split_labels, join_labels, write_table, read_jsonl, write_jsonl,
 # read_csv_rows, write_csv_rows
 # 【输入接口】rows, path 等函数参数；返回值及写出操作见对应函数
-# 【调用方】data_preparation/entity_processing/07_canonicalize_entities.py
-# 【调用方】candidate_pool/graph_construction/01_build_ontology_graph.py
 # 【调用方】fusion/analyze_rq2a_graph_budget_sweep.py
 # 【调用方】evaluation/run_closed600_e5_lopo_preflight.py
 # 【调用方】evaluation/run_evidence_signal_triangulation.py

@@ -4,7 +4,7 @@
 # 【调用方】candidate_pool/run_dense_semantic_drift_rescue_audit.py
 # 【调用方】candidate_pool/run_m50_dense_frontier_analysis.py
 # 【调用方】utility_scoring/annotation/run_top3_residual_judging.py
-# 【调用方】utility_scoring/learned_diffusion/reranker_validation.py
+# 【调用方】utility_scoring/reranker_validation.py
 # 【调用方】evidence_selection/run_strict_native_graph_conservative_policy.py
 # 【调用方】evidence_selection/run_strict_sbert_mixed_selector.py
 # 【调用方】evaluation/community_reply_auxiliary.py

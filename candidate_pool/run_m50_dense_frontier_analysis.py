@@ -8,8 +8,7 @@
 # 【依赖文件】evaluation/judgment_completeness.py
 # 【依赖文件】evaluation/statistics.py
 # 【依赖文件】utility_scoring/annotation/run_top3_residual_judging.py
-# 【依赖文件】utility_scoring/learned_diffusion/__init__.py
-# 【依赖文件】utility_scoring/learned_diffusion/reranker_validation.py
+# 【依赖文件】utility_scoring/reranker_validation.py
 # 【调用方】candidate_pool/run_m50_graph_frontier_analysis.py
 # 【调用方】evidence_selection/run_selection_action_space_repair.py
 # 【调用方】evaluation/confirmatory_test200_rq2b.py
@@ -40,7 +39,7 @@ try:
         complete_utility_v2_rows,
     )
     from evaluation.statistics import bootstrap_ci
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
     from candidate_pool.run_dense_semantic_drift_rescue_audit import (
         SOURCE_BLIND_FEATURES,
         STATIC_PREDICTOR_FEATURES,
@@ -67,7 +66,7 @@ except ModuleNotFoundError:
         complete_utility_v2_rows,
     )
     from evaluation.statistics import bootstrap_ci
-    from utility_scoring.learned_diffusion import reranker_validation as canonical
+    from utility_scoring import reranker_validation as canonical
     from candidate_pool.run_dense_semantic_drift_rescue_audit import (
         SOURCE_BLIND_FEATURES,
         STATIC_PREDICTOR_FEATURES,

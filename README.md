@@ -1,6 +1,6 @@
 # Utility-Aware Cross-Thread Evidence Retrieval and Selection for RAG in Online ADHD Communities
 
-This repository contains the complete code release for the MSc project
+This repository contains the final thesis pipeline code release for the MSc project
 **Utility-Aware Cross-Thread Evidence Retrieval and Selection for RAG in
 Online ADHD Communities**. It studies how candidate depth, complementary
 retrieval routes, fusion, utility supervision, and final-set selection affect
@@ -11,6 +11,20 @@ from dense, lexical, and graph-assisted access routes. Stage 2 learns utility
 scores and selects eight comments for the final evidence set. The code is
 organised in that methodological order, so each top-level directory corresponds
 to a distinct part of the dissertation rather than to one retrieval family.
+
+## Branches
+
+- **main**: final thesis pipeline, its shared dependencies, reported model
+  comparisons, selection strategies and evaluation controls.
+- **codex/development-archive**: the public development tree before cleanup,
+  preserved at commit `841c63963d1ede24afbff76187d49e9fc22fed14`.
+  Earlier ontology, EF/empathy schema, custom multi-hop, PCST, IRCoT,
+  spreading-activation and learned-diffusion experiments remain there.
+
+The archive is historical code, not an alternative reproduction recipe for
+the final results. Main retains all reported scorer families, not only the
+selected checkpoints. Some shared helpers keep historical function names to
+preserve the experiment interfaces.
 
 ## Data source
 
@@ -33,33 +47,45 @@ set the local input and output paths in a copy of
 
 ```text
 RuitingLiu_MSc/
-├── data_preparation/
-│   ├── sampling/                 eligibility, scenario stratification and splits
-│   └── entity_processing/        OpenIE extraction, canonicalisation and grounding
-├── candidate_pool/
-│   ├── retrieval/                dense, BM25 and graph-assisted retrieval components
-│   ├── graph_construction/       ontology graph, densification and communities
-│   └── *.py                      candidate-access and depth-analysis runners
-├── fusion/                       candidate-pool assembly, RRF, CC and RQ2a analyses
-├── utility_scoring/
-│   ├── learned_diffusion/        reusable model-training and validation components
-│   ├── annotation/               runtime adapters for utility annotation
-│   └── *.py                      features, lightweight models and cross-encoder training
+├── data_preparation/             sampling, partitions and raw-text adapter export
+├── candidate_pool/               pinned HippoRAG2 wrapper and access/depth analyses
+├── fusion/                       primary graph merge, RRF, CC and RQ2a comparisons
+├── utility_scoring/              shared validation, features and reported scorer families
 ├── evidence_selection/           Direct, replacement and residual-prior strategies
 ├── evaluation/                   IR, utility, community and held-out evaluation
-├── figures/                      scripts for the reported dissertation figures
-├── configuration/                parameters, ontology and dependency specifications
-├── shared/                       common file and hosted-model adapters
-├── models/
-│   ├── primary/                  selected CatBoost and 256-token cross-encoder
-│   └── supplementary/            512-token cross-encoder comparison
-├── scripts/verify_release.py     release and internal-import verification
-├── external_assets.example.env  runtime configuration template
-└── pyproject.toml                package metadata
+├── figures/                      reported dissertation figures
+├── configuration/                experiment parameters and pinned dependency metadata
+├── shared/                       file and hosted-model adapters
+├── models/primary/               CatBoost and 256-token cross-encoder
+├── models/supplementary/         512-token cross-encoder comparison
+└── scripts/                      release verification and offline graph-route regression
 ```
 
-Graph construction appears inside `candidate_pool/` alongside dense and
-lexical retrieval, following its role in candidate access.
+## Which code actually builds the graph?
+
+`candidate_pool/run_official_hipporag_bedrock.py` calls the pinned upstream
+`HippoRAG.index(docs=texts)`. Upstream HippoRAG2 performs OpenIE extraction,
+entity/fact indexing and graph construction. The final routes reuse this
+common graph and cached extraction; they do not construct the earlier
+handwritten EF/empathy ontology.
+
+| Final graph route | Implementation |
+|---|---|
+| Passage-restart Graph | `no_recognition`: fact seeds plus direct passage restart |
+| Fact-only Graph | `fact_only_no_recognition`: same fact seeds, passage restart weight zero |
+| Primary Graph | Alternate the two native rankings, deduplicate, and apply the frozen original MiniLM DenseTop8 exclusion |
+
+The Primary Graph merge is `_round_robin_graph_head` in
+`candidate_pool/analyze_strict_sbert_graph_oracle.py`, reused by
+`fusion/run_depth_graph_utility_community_frontier.py`. All three routes
+bypass recognition. The native graph rankings have depth 100; the reported
+candidate-budget comparisons use prefixes of those rankings.
+
+The module name `openie_openai` refers to an OpenAI-compatible interface;
+it does not establish which provider or model produced a saved extraction.
+Use the extraction cache provenance and runtime manifest for that identity.
+The wrapper's historical filename is retained, but `--llm-model`,
+`--embedding-model` and `--retrieval-profile` must now be explicit.
 
 ## Correspondence with the dissertation
 
@@ -99,18 +125,27 @@ their separately governed templates through `EVIDENCE_PIPELINE_PROMPT_DIR` and
 
 ## Reproduction order
 
-1. Filter the r/ADHD archive and create the research cohorts with
+1. Establish eligible posts, stratified cohorts and frozen partitions with
    `data_preparation/sampling/`.
-2. Extract and canonicalise entities with
-   `data_preparation/entity_processing/`, then construct the graph with
-   `candidate_pool/graph_construction/`.
-3. Run dense, lexical, and graph-assisted candidate access with
-   `candidate_pool/` and `candidate_pool/retrieval/`.
-4. Assemble and compare candidate pools with `fusion/`.
-5. Build Stage 2 features and fit the utility-aware model families with
+2. Export the frozen comment scope and query adapter with
+   `data_preparation/export_hipporag_dataset.py`. Supply `--text-csv` for the
+   canonical raw comment text. Its graph-node input identifies corpus
+   membership; it does not supply the ontology graph used by retrieval.
+3. Build or reuse the pinned HippoRAG2 index with
+   `candidate_pool/run_official_hipporag_bedrock.py`, then obtain the two
+   recognition-free rankings and construct Primary Graph.
+4. Assemble dense, lexical and graph candidate rankings and compare fusion
+   with `fusion/` and the candidate-depth analysis runners.
+5. Build Stage 2 features and fit the reported model families with
    `utility_scoring/`.
-6. Apply the final-set strategies in `evidence_selection/`.
-7. Reproduce the reported metrics and plots with `evaluation/` and `figures/`.
+6. Apply final-set strategies in `evidence_selection/`.
+7. Reproduce metrics and plots with `evaluation/` and `figures/`.
+
+Exact replay needs the matching frozen corpus-membership files, raw text,
+query splits, extraction caches, judgments and external templates. These are
+not redistributed here. The repository is a code/checkpoint release, not a
+self-contained data package; the archive branch preserves the earlier
+construction code for tracing historical scope artifacts.
 
 `PIPELINE.md` lists the principal runners within each stage. Relative input and
 output paths resolve from the repository root.
@@ -147,5 +182,6 @@ checkpoints retain the upstream Apache-2.0 notice under
 ## Verification
 
 ```bash
+python scripts/check_final_graph_routes.py
 python scripts/verify_release.py
 ```

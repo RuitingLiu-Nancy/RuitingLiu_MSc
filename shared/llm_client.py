@@ -4,8 +4,6 @@
 # call_requesty_record, ClaudeCodeGenerationError, claude_code_runtime_contract,
 # claude_code_auth_status, call_claude_code_record
 # 【依赖文件】configuration/__init__.py
-# 【调用方】data_preparation/entity_processing/open_entity_extraction.py
-# 【调用方】candidate_pool/retrieval/query_rewrite.py
 # 【调用方】candidate_pool/run_official_hipporag_bedrock.py
 # 【调用方】utility_scoring/annotation/run_top3_residual_judging.py
 

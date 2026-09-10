@@ -3,7 +3,6 @@
 # 【主要函数】DrugFilter, from_config
 # 【输入接口】cfg 等函数参数；返回值及写出操作见对应函数
 # 【调用方】candidate_pool/run_dense_semantic_drift_rescue_audit.py
-# 【调用方】evaluation/two_graph_compare.py
 
 """Safety filter: exclude medication-related queries from the study.
 
